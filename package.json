@@ -1,0 +1,45 @@
+{
+  "name": "pigments",
+  "version": "0.0.0",
+  "description": "A color model for atom packages",
+  "main": "lib/pigments.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/abe33/pigments.git"
+  },
+  "keywords": [
+    "color",
+    "model",
+    "atom"
+  ],
+  "author": "Cédric Néhémie <cedric.nehemie@gmail.com>",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/abe33/pigments/raw/master/LICENSE.md"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/abe33/pigments/issues"
+  },
+  "dependencies": {
+    "emissary": "1.x",
+    "underscore-plus": "1.x",
+    "property-accessors": "1.x",
+    "mixto": "1.x",
+    "oniguruma": "2.x"
+  },
+  "devDependencies": {
+    "jasmine-focused": "1.x",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-cli": "~0.1.8",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-shell": "~0.2.2",
+    "grunt-coffeelint": "0.0.6",
+    "rimraf": "~2.2.2"
+  }
+}
