@@ -40,6 +40,7 @@ class Color
     @colorExpressions.push
       begin: begin
       end: end
+      args: args
       onigBegin: new OnigRegExp("#{begin}")
       onigEnd: new OnigRegExp("#{end}")
       handle: handle

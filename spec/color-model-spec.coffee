@@ -1,6 +1,7 @@
 Color = require '../lib/color-model'
 
-require '../lib/color-expressions'
+loadExpressions = require '../lib/color-expressions'
+loadExpressions()
 
 itShouldParseTheColor = (expr, red=0, green=0, blue=0, alpha=1) ->
   msg = "should create a color with red=#{red}, green=#{green}, blue=#{blue} and alpha=#{alpha}"
@@ -19,6 +20,7 @@ itShouldParseTheColor = (expr, red=0, green=0, blue=0, alpha=1) ->
       expect(color.alpha).toBeCloseTo(alpha, 0.001)
 
 describe 'Color', ->
+
   itShouldParseTheColor('#ff7f00', 255, 127, 0)
   itShouldParseTheColor('#f70', 255, 119, 0)
 

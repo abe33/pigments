@@ -19,3 +19,5 @@ Color = require './color-model'
   clamp
   clampInt
 } = require './utils'
+
+Color.addOperation 'lighten\\(', Color, floatOrPercent, '\\)', ->
