@@ -1,20 +1,24 @@
 
 Color = require './color-model'
 
-int = '\\d+'
-float = "#{int}(?:\\.#{int})?"
-percent = "#{float}%"
-intOrPercent = "(#{int}|#{percent})"
-floatOrPercent = "(#{float}|#{percent})"
-comma = '\\s*,\\s*'
-notQuote = "[^\"'\n]*"
-hexa = '[\\da-fA-F]'
-ps = '\\(\\s*'
-pe = '\\s*\\)'
+{
+  int
+  float
+  percent
+  intOrPercent
+  floatOrPercent
+  comma
+  notQuote
+  hexa
+  ps
+  pe
+} = require './regexes'
 
-strip = (str) -> str.replace(/\s+/g, '')
-clamp = (n) -> Math.min(1, Math.max(0, n))
-clampInt = (n, max=100) -> Math.min(max, Math.max(0, n))
+{
+  strip
+  clamp
+  clampInt
+} = require './utils'
 
 parseIntOrPercent = (value) ->
   if value.indexOf('%') isnt -1

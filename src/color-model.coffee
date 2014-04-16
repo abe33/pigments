@@ -17,6 +17,9 @@ class Color
   # The {Array} where color expression handlers are stored
   @colorExpressions: []
 
+  # The {Array} where color operation handlers are stored
+  @colorOperations: []
+
   # Public: Registers a color expression into the {Color} class.
   # The function will create an expression handler with the passed-in
   # arguments.
@@ -33,6 +36,15 @@ class Color
       handle: handle
       canHandle: (expression) -> @onigRegExp.testSync expression
 
+  @addOperation: (begin, args..., end, handle=->) ->
+    @colorExpressions.push
+      begin: begin
+      end: end
+      onigBegin: new OnigRegExp("#{begin}")
+      onigEnd: new OnigRegExp("#{end}")
+      handle: handle
+      canHandle: (expression) -> @onigBegin.testSync expression
+
   # Public: Returns a {RegExp} that contains all the registered expressions
   # separated with `|`. This is this regexp that will be used to scan buffers
   # and find color expressions.
@@ -40,7 +52,7 @@ class Color
     @colorExpressions.map((expr) -> "(#{expr.regexp})" ).join('|')
 
   @canHandle: (colorExpression) ->
-    @colorExpressions.some (expr) => expr.canHandle(colorExpression)
+    @colorExpressions.some (expr) -> expr.canHandle(colorExpression)
 
   @mixColors: (color1, color2, amount=0.5) ->
     inverse = 1 - amount
