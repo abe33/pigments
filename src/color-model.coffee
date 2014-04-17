@@ -1,6 +1,7 @@
 _ = require 'underscore-plus'
 PropertyAccessors = require 'property-accessors'
 ColorConversions = require './color-conversions'
+ColorParsing = require './color-parsing'
 NamedColors = require './named-colors'
 {OnigRegExp} = require 'oniguruma'
 
@@ -12,39 +13,8 @@ module.exports =
 class Color
   PropertyAccessors.includeInto(this)
   ColorConversions.extend(this)
+  ColorParsing.includeInto(this)
   NamedColors.extend(this)
-
-  # The {Array} where color expression handlers are stored
-  @colorExpressions: []
-
-  # The {Array} where color operation handlers are stored
-  @colorOperations: []
-
-  # Public: Registers a color expression into the {Color} class.
-  # The function will create an expression handler with the passed-in
-  # arguments.
-  #
-  # regexp - A {RegExp} that matches the color notation. The
-  #          expression can capture groups that will be used later in the
-  #          color parsing phase
-  # handle - A {Function} that takes a {Color} to modify and the {String}
-  #          that matched during the lookup phase
-  @addExpression: (regexp, handle=->) ->
-    @colorExpressions.push
-      regexp: regexp
-      onigRegExp: new OnigRegExp("^#{regexp}$")
-      handle: handle
-      canHandle: (expression) -> @onigRegExp.testSync expression
-
-  @addOperation: (begin, args..., end, handle=->) ->
-    @colorExpressions.push
-      begin: begin
-      end: end
-      args: args
-      onigBegin: new OnigRegExp("#{begin}")
-      onigEnd: new OnigRegExp("#{end}")
-      handle: handle
-      canHandle: (expression) -> @onigBegin.testSync expression
 
   # Public: Returns a {RegExp} that contains all the registered expressions
   # separated with `|`. This is this regexp that will be used to scan buffers
@@ -157,8 +127,8 @@ class Color
     [@red, @green, @blue, @alpha] = [0, 0, 0, 1]
 
     if colorExpression?
-      @constructor.colorExpressions.some (expr) =>
-        expr.handle(this, colorExpression) if expr.canHandle(colorExpression)
+      found = @parseOperation(colorExpression)
+      @parseExpression(colorExpression) unless found
 
   # Public: Returns a {String} reprensenting the color with the CSS `rgba`
   # notation.
