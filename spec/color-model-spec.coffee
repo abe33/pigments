@@ -1,16 +1,13 @@
 Color = require '../lib/color-model'
 
-loadExpressions = require '../lib/color-expressions'
-loadExpressions()
+require '../lib/color-expressions'
+require '../lib/color-operations'
 
 itShouldParseTheColor = (expr, red=0, green=0, blue=0, alpha=1) ->
   msg = "should create a color with red=#{red}, green=#{green}, blue=#{blue} and alpha=#{alpha}"
   desc = expr.replace(/#/g, '')
 
   describe "created with #{desc}", ->
-    beforeEach ->
-      expect(Color.canHandle(expr)).toBeTruthy()
-
     it msg, ->
       color = new Color(expr)
 
@@ -20,7 +17,7 @@ itShouldParseTheColor = (expr, red=0, green=0, blue=0, alpha=1) ->
       expect(color.alpha).toBeCloseTo(alpha, 0.001)
 
 describe 'Color', ->
-
+  
   itShouldParseTheColor('#ff7f00', 255, 127, 0)
   itShouldParseTheColor('#f70', 255, 119, 0)
 

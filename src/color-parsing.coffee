@@ -60,7 +60,6 @@ class ColorParsing extends Mixin
           endMatch = @onigEnd.searchSync(text, start)
           return unless endMatch?
 
-
           range = [startMatch[0].start, endMatch[0].end]
           results =
             range: range
