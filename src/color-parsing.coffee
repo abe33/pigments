@@ -1,6 +1,9 @@
 Mixin = require 'mixto'
 {OnigRegExp} = require 'oniguruma'
 
+ColorExpression = require './color-expression'
+ColorOperation = require './color-operation'
+
 module.exports =
 class ColorParsing extends Mixin
   # The {Array} where color expression handlers are stored
@@ -13,82 +16,58 @@ class ColorParsing extends Mixin
   # The function will create an expression handler with the passed-in
   # arguments.
   #
-  # regexp - A {RegExp} that matches the color notation. The
+  # regexp - An {OnigRegExp} {String} that matches the color notation. The
   #          expression can capture groups that will be used later in the
   #          color parsing phase
   # handle - A {Function} that takes a {Color} to modify and the {String}
   #          that matched during the lookup phase
   @addExpression: (regexp, handle=->) ->
-    @colorExpressions.push
-      regexp: regexp
-      onigRegExp: new OnigRegExp("^#{regexp}$")
-      handle: handle
-      canHandle: (expression) -> @onigRegExp.testSync expression
+    @colorExpressions.push new ColorExpression(regexp, handle)
 
+  # Public: Registers a color operation into the {Color} class.
+  # The function will create an operation handler with the passed-in
+  # arguments.
+  #
+  # begin - An {OnigRegExp} {String} that matches the start of the operation.
+  # args... - A list of arguments for the operation. An argument can be either
+  #           a reference to the {Color} class or an {OnigRegExp} {String}.
+  #           When {Color} is passed, the argument will any expression or
+  #           operation registered in the {Color} class.
+  # end - An {OnigRegExp} {String} that matches the end of the operation
+  # handle - A {Function} that takes a {Color} to modify and an array of the
+  #          arguments passed to the operation. When the registered argument is
+  #          {Color}, the argument value will be parsed automatically as
+  #          a {Color}.
   @addOperation: (begin, args..., end, handle=->) ->
-    constructor = this
-    @colorOperations.push
-      begin: begin
-      end: end
-      args: args
-      onigBegin: new OnigRegExp(begin)
-      onigEnd: new OnigRegExp(end)
-      handle: handle
-      search: (text, start=0) ->
-        results = undefined
-        argMatches = []
+    @colorOperations.push new ColorOperation(begin, args, end, handle, this)
 
-        if startMatch = @onigBegin.searchSync(text, start)
-          start = startMatch[0].end
-          for arg in @args
-            if arg is constructor
-              argMatch = constructor.searchColor(text, start)
-            else
-              onigRegex = new OnigRegExp(arg)
-              match = onigRegex.searchSync(text, start)
-              return unless match?
-
-              range = [match[0].start, match[0].end]
-              argMatch =
-                range: range
-                match: text[range[0]..range[1]]
-
-            return unless argMatch?
-            [_, start] = argMatch.range
-            argMatches.push argMatch
-
-          endMatch = @onigEnd.searchSync(text, start)
-          return unless endMatch?
-
-          range = [startMatch[0].start, endMatch[0].end]
-          results =
-            range: range
-            match: text[range[0]...range[1]]
-            argMatches: argMatches
-
-        results
-
-      canHandle: (expression) -> @search(expression)?
-
-  @searchColor: (text, start) ->
+  # Public: Searches for a {Color} in `text` using all the expressions and
+  # operations registered in the {Color} class.
+  #
+  # text - The {String} into which performing the search.
+  # start - An optional {Integer} that set the starting index for the search.
+  #         Defaults to `0`
+  #
+  # Returns an object with the following properties:
+  #
+  # match - The first color {String} found in the {String}
+  # range - An {Array} containing the character index of the start and end
+  #         of the matching {String}
+  # argMatches - An {Array} with the arguments matches when the found color
+  #              is an operation.
+  @searchColor: (text, start=0) ->
     found = @searchOperation(text, start)
     found = @searchExpression(text, start) unless found?
     found
 
+  # Public: Searches for a color expression in `text` using the ones registered
+  # previously into the {Color} class.
+  #
+  # teext,
   @searchExpression: (text, start=0) ->
     results = undefined
     @colorExpressions.some (expr) ->
-      re = new OnigRegExp(expr.regexp)
-      if match = re.searchSync(text, start)
-        [match] = match
-
-        range = [match.start, match.end]
-        results =
-          range: range
-          match: text[range[0]...range[1]]
-        return true
-
-      false
+      return true if results = expr.search(text, start)
 
     results
 
