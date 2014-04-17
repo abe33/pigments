@@ -111,7 +111,14 @@ class ColorParsing extends Mixin
   parseOperation: (colorExpression) ->
     @constructor.colorOperations.some (operation) =>
       if results = operation.search(colorExpression)
-        operation.handle(this, [1,1])
+        args = results.argMatches.map (res, i) =>
+          argType = operation.args[i]
+          if argType is @constructor
+            new @constructor res.match
+          else
+            res.match
+
+        operation.handle(this, args)
         return true
 
       false

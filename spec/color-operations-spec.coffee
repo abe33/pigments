@@ -13,12 +13,11 @@ Color = require '../lib/color-model'
   pe
 } = require '../lib/regexes'
 
-
 describe 'Color', ->
   beforeEach ->
     Color.colorOperations = []
     Color.addOperation 'foo\\(', Color, floatOrPercent, '\\)', (color, [@baseColor, @amount]) =>
-      
+
   describe '.searchOperation', ->
     describe 'with a valid operation in the string', ->
       beforeEach ->
@@ -68,6 +67,9 @@ describe 'Color', ->
       it 'should have called the handler', ->
         expect(@baseColor).toBeDefined()
         expect(@amount).toBeDefined()
+
+        expect(@baseColor).toEqual(new Color('#fff'))
+        expect(@amount).toEqual('20%')
 
     describe 'created with foo(10)', ->
       beforeEach ->
