@@ -120,6 +120,17 @@ describe 'Color', ->
             expect(value).toBeDefined()
             expect(value.match).toBe('#fff')
 
+    describe 'with a color before an operation', ->
+      it 'should return the color', ->
+        promise = Color.searchColor 'bar, rgba(0,0,0,1), foo(red, 20%)', 3
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (value) ->
+            expect(value).toBeDefined()
+            expect(value.match).toBe('#fff')
+
 
   describe '.searchOperationSync', ->
     describe 'with a valid operation in the string', ->

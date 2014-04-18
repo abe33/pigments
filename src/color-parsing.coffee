@@ -42,6 +42,35 @@ class ColorParsing extends Mixin
   @addOperation: (begin, args..., end, handle=->) ->
     @colorOperations.push new ColorOperation(begin, args, end, handle, this)
 
+  @scanBufferForColorsInRange: (buffer, range=[[0, 0], [Infinity, Infinity]], callback=->) ->
+    throw new Error 'Missing buffer' unless buffer?
+    defer = Q.defer()
+    [startPos, endPos] = range
+
+    start = buffer.characterIndexForPosition(startPos)
+    end = buffer.characterIndexForPosition(endPos)
+    bufferText = buffer.getText()
+
+    results = []
+    iterator = (result) =>
+      if result?
+        [matchStart, matchEnd] = result.range
+
+        if matchEnd <= end
+          results.push result
+          callback(result)
+          start = matchEnd
+          @searchColor bufferText, start, iterator
+        else
+          defer.resolve if results.length > 0 then results else undefined
+
+      else
+        defer.resolve if results.length > 0 then results else undefined
+
+    @searchColor bufferText, start, iterator
+
+    defer.promise
+
   # Public: Searches for a {Color} in `text` using all the expressions and
   # operations registered in the {Color} class.
   #
@@ -57,9 +86,20 @@ class ColorParsing extends Mixin
   # argMatches - An {Array} with the arguments matches when the found color
   #              is an operation.
   @searchColorSync: (text, start=0) ->
-    found = @searchOperationSync(text, start)
-    found = @searchExpressionSync(text, start) unless found?
-    found
+    foundOp = @searchOperationSync(text, start)
+    foundExpr = @searchExpressionSync(text, start)
+
+    if foundOp? and foundExpr?
+      if foundOp.range[0] < foundExpr.range[0]
+        foundOp
+      else
+        foundExpr
+    else if foundOp?
+      foundOp
+    else if foundExpr?
+      foundExpr
+    else
+      undefined
 
   # Public: Searches for a color expression in `text` using the ones registered
   # previously into the {Color} class.
@@ -80,10 +120,28 @@ class ColorParsing extends Mixin
     results
 
   @searchColor: (text, start=0, callback=->) ->
+    foundOp = undefined
+    foundExpr = undefined
+
     @searchOperation(text, start)
     .then (result) =>
-      if result? then result else @searchExpression(text, start)
+      foundOp = result
+      @searchExpression(text, start)
     .then (result) ->
+      foundExpr = result
+
+      result = if foundOp? and foundExpr?
+        if foundOp.range[0] < foundExpr.range[0]
+          foundOp
+        else
+          foundExpr
+      else if foundOp?
+        foundOp
+      else if foundExpr?
+        foundExpr
+      else
+        undefined
+
       callback(result)
       result
 
