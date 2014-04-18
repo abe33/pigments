@@ -1,3 +1,4 @@
+Q = require 'q'
 {OnigRegExp} = require 'oniguruma'
 
 module.exports =
@@ -6,6 +7,7 @@ class ColorExpression
     @onigRegExp = new OnigRegExp("^#{@regexp}$")
 
   canHandle: (expression) -> @onigRegExp.testSync expression
+
   searchSync: (text, start=0) ->
     results = undefined
     re = new OnigRegExp(@regexp)
@@ -18,3 +20,13 @@ class ColorExpression
         match: text[range[0]...range[1]]
 
     results
+
+  search: (text, start=0, callback=->) ->
+    defer = Q.defer()
+
+    setImmediate =>
+      res = @searchSync(text, start)
+      defer.resolve(res)
+      callback(res)
+
+    defer.promise
