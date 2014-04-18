@@ -62,6 +62,19 @@ describe 'Color', ->
           promise.then (value) ->
             expect(value).toBeDefined()
 
+  describe 'searchExpression', ->
+    describe 'with a valid expression', ->
+      it 'should call back with a result', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        Color.searchExpression 'bar, #fff, 20%', 0, searchCallback
+
+        waitsFor ->
+          searchCallback.callCount is 1
+
+        runs ->
+          result = searchCallback.argsForCall[0][0]
+          expect(result).toBeDefined()
+
 
   describe '.searchOperationSync', ->
     describe 'with a valid operation in the string', ->
@@ -128,7 +141,7 @@ describe 'Color', ->
           expect(@result.argMatches).toBeDefined()
           expect(@result.argMatches.length).toEqual(2)
 
-  describe 'with an operation defined', ->
+  describe 'during the creation of a color', ->
     describe 'created with foo(#fff, 20%)', ->
       beforeEach ->
         @color = new Color('foo(#fff, 20%)')
