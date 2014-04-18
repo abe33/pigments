@@ -31,6 +31,12 @@ describe 'Color', ->
                 'rgba(0,0,0,1)'
               ])
 
+              expect(results[0].bufferRange).toBeDefined()
+              expect(results[0].bufferRange.start.row).toEqual(2)
+              expect(results[0].bufferRange.start.column).toEqual(9)
+              expect(results[0].bufferRange.end.row).toEqual(2)
+              expect(results[0].bufferRange.end.column).toEqual(22)
+
     describe 'for a wider range', ->
       describe 'the passed-in callback', ->
         it 'should have been called twice', ->

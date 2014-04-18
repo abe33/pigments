@@ -44,11 +44,13 @@ class ColorParsing extends Mixin
 
   @scanBufferForColorsInRange: (buffer, range=[[0, 0], [Infinity, Infinity]], callback=->) ->
     throw new Error 'Missing buffer' unless buffer?
-    defer = Q.defer()
-    [startPos, endPos] = range
+    Range = buffer.constructor.Range
 
-    start = buffer.characterIndexForPosition(startPos)
-    end = buffer.characterIndexForPosition(endPos)
+    defer = Q.defer()
+    range = Range.fromObject(range)
+
+    start = buffer.characterIndexForPosition(range.start)
+    end = buffer.characterIndexForPosition(range.end)
     bufferText = buffer.getText()
 
     results = []
@@ -57,6 +59,10 @@ class ColorParsing extends Mixin
         [matchStart, matchEnd] = result.range
 
         if matchEnd <= end
+          result.bufferRange = new Range(
+            buffer.positionForCharacterIndex(result.range[0]),
+            buffer.positionForCharacterIndex(result.range[1]),
+          )
           results.push result
           callback(result)
           start = matchEnd
