@@ -134,68 +134,53 @@ describe 'Color', ->
 
   describe '.searchOperationSync', ->
     describe 'with a valid operation in the string', ->
-      beforeEach ->
-        @result = Color.searchOperationSync 'bar, foo(#fff, 20%)'
-
       describe 'the results', ->
         it 'should exist', ->
-          expect(@result).toBeDefined()
+          result = Color.searchOperationSync 'bar, foo(#fff, 20%)'
+          expect(result).toBeDefined()
 
-        it 'should have a range', ->
-          expect(@result.range).toBeDefined()
-          expect(@result.range).toEqual([5, 19])
+          expect(result.range).toBeDefined()
+          expect(result.range).toEqual([5, 19])
 
-        it 'should have a match', ->
-          expect(@result.match).toBeDefined()
-          expect(@result.match).toEqual('foo(#fff, 20%)')
+          expect(result.match).toBeDefined()
+          expect(result.match).toEqual('foo(#fff, 20%)')
 
     describe 'with nested operations', ->
-      beforeEach ->
-        @result = Color.searchOperationSync 'foo, foo(foo(#fff, 20%), 50%)'
 
       describe 'the results', ->
         it 'should exist', ->
-          expect(@result).toBeDefined()
+          result = Color.searchOperationSync 'foo, foo(foo(#fff, 20%), 50%)'
+          expect(result).toBeDefined()
 
-        it 'should have a range', ->
-          expect(@result.range).toBeDefined()
-          expect(@result.range).toEqual([5, 29])
+          expect(result.range).toBeDefined()
+          expect(result.range).toEqual([5, 29])
 
-        it 'should have a match', ->
-          expect(@result.match).toBeDefined()
-          expect(@result.match).toEqual('foo(foo(#fff, 20%), 50%)')
+          expect(result.match).toBeDefined()
+          expect(result.match).toEqual('foo(foo(#fff, 20%), 50%)')
 
-        it 'should have an argMatches array', ->
-          expect(@result.argMatches).toBeDefined()
-          expect(@result.argMatches.length).toEqual(2)
+          expect(result.argMatches).toBeDefined()
+          expect(result.argMatches.length).toEqual(2)
 
     describe 'with something that is not an expression', ->
-      beforeEach ->
-        @result = Color.searchOperationSync 'foo'
-
       describe 'the results', ->
         it 'should be undefined', ->
-          expect(@result).toBeUndefined()
+          result = Color.searchOperationSync 'foo'
+          expect(result).toBeUndefined()
 
     describe 'with an incomplete expression before a complete one', ->
-      beforeEach ->
-        @result = Color.searchOperationSync 'foo(, bar, foo(#fff, 20%)'
-
       describe 'the results', ->
         it 'should exist', ->
-          expect(@result).toBeDefined()
+          result = Color.searchOperationSync 'foo(, bar, foo(#fff, 20%)'
+          expect(result).toBeDefined()
 
-        it 'should have a range', ->
-          expect(@result.range).toBeDefined()
-          expect(@result.range).toEqual([11, 25])
+          expect(result.range).toBeDefined()
+          expect(result.range).toEqual([11, 25])
 
-        it 'should have a match', ->
-          expect(@result.match).toBeDefined()
-          expect(@result.match).toEqual('foo(#fff, 20%)')
+          expect(result.match).toBeDefined()
+          expect(result.match).toEqual('foo(#fff, 20%)')
 
-        it 'should have an argMatches array', ->
-          expect(@result.argMatches).toBeDefined()
-          expect(@result.argMatches.length).toEqual(2)
+          expect(result.argMatches).toBeDefined()
+          expect(result.argMatches.length).toEqual(2)
 
   describe 'during the creation of a color', ->
     describe 'created with foo(#fff, 20%)', ->

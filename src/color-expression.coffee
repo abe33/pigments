@@ -54,6 +54,9 @@ class ColorExpression
   # text - The {String} into which performing the search.
   # start - An optional {Integer} that set the starting index for
   #         the search. Defaults to `0`
+  # callback - An optional {Function} that will be called with the
+  #            match results {Object} or `undefined` if no matches
+  #            was found.
   #
   # Returns a {Promise} whose value is the result {Object}, containing:
   #

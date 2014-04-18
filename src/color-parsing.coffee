@@ -35,8 +35,8 @@ class ColorParsing extends Mixin
   # begin - An {OnigRegExp} {String} that matches the start of the operation.
   # args... - A list of arguments for the operation. An argument can be either
   #           a reference to the {Color} class or an {OnigRegExp} {String}.
-  #           When {Color} is passed, the argument will any expression or
-  #           operation registered in the {Color} class.
+  #           When {Color} is passed, the argument will search for any
+  #           operation forms registered in the {Color} class.
   # end - An {OnigRegExp} {String} that matches the end of the operation
   # handle - A {Function} that takes a {Color} to modify and an array of the
   #          arguments passed to the operation. When the registered argument is

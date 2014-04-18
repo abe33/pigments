@@ -5,14 +5,49 @@ Q = require 'q'
 
 commaRegexp = new OnigRegExp('\\G' + comma)
 
+# Internal: The {ColorOperation} class represents a color operation {String}
+# representation.
 module.exports =
 class ColorOperation
+  # Public: Creates a {ColorOperation}.
+  #
+  # begin - An {OnigRegExp} {String} that matches the start of the operation.
+  # args... - A list of arguments for the operation. An argument can be either
+  #           a reference to the {Color} class or an {OnigRegExp} {String}.
+  #           When {Color} is passed, the argument will search for any operation
+  #           forms registered in the {Color} class.
+  # end - An {OnigRegExp} {String} that matches the end of the operation
+  # handle - A {Function} that takes a {Color} to modify and an array of the
+  #          arguments passed to the operation. When the registered argument is
+  #          {Color}, the argument value will be parsed automatically as
+  #          a {Color}.
   constructor: (@begin, @args, @end, @handle, @Color) ->
     @onigBegin = new OnigRegExp(@begin)
     @onigEnd = new OnigRegExp('\\G' + @end)
 
-  canHandle: (expression) -> @search(expression)?
+  # Public: Returns `true` if the current {ColorOperation} can handle
+  # the passed-in `operation` {String}.
+  #
+  # operation - A {String} to test
+  #
+  # Returns `true` if the current {ColorOperation} can handle
+  # the passed-in operation.
+  canHandle: (operation) -> @search(operation)?
 
+  # Public: Performs an synchronous search for this operation into the
+  # passed-in `text` {String}.
+  #
+  # text - The {String} into which performing the search.
+  # start - An optional {Integer} that set the starting index for
+  #         the search. Defaults to `0`
+  #
+  # Returns an {Object} with the following properties:
+  #
+  # match - The first color {String} found in the {String}
+  # range - An {Array} containing the character index of the start
+  #         and end of the matching {String}
+  # argMatches - An {Array} containing the submatches for the operation
+  #              arguments.
   searchSync: (text, start=0) ->
     while startMatch = @onigBegin.searchSync(text, start)
       argMatches = []
@@ -54,6 +89,23 @@ class ColorOperation
 
     undefined
 
+  # Public: Performs an asynchronous search for this operation into the
+  # passed-in `text` {String}.
+  #
+  # text - The {String} into which performing the search.
+  # start - An optional {Integer} that set the starting index for
+  #         the search. Defaults to `0`
+  # callback - An optional {Function} that will be called with the
+  #            match results {Object} or `undefined` if no matches
+  #            was found.
+  #
+  # Returns a {Promise} whose value is the match {Object}, containing:
+  #
+  # match - The first color {String} found in the {String}
+  # range - An {Array} containing the character index of the start
+  #         and end of the matching {String}
+  # argMatches - An {Array} containing the submatches for the operation
+  #              arguments.
   search: (text, start=0, callback=->) ->
     defer = Q.defer()
 
