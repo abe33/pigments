@@ -30,7 +30,8 @@
     "underscore-plus": "1.x",
     "property-accessors": "1.x",
     "mixto": "1.x",
-    "oniguruma": "2.x"
+    "oniguruma": "2.x",
+    "q": "~1.0.1"
   },
   "devDependencies": {
     "jasmine-focused": "1.x",
@@ -41,7 +42,6 @@
     "grunt-shell": "~0.2.2",
     "grunt-coffeelint": "0.0.6",
     "rimraf": "~2.2.2",
-    "text-buffer": "2.x",
-    "q": "~1.0.1"
+    "text-buffer": "2.x"
   }
 }
