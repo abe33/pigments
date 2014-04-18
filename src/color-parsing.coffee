@@ -5,6 +5,9 @@ Q = require 'q'
 ColorExpression = require './color-expression'
 ColorOperation = require './color-operation'
 
+# Internal: The {ColorParsing} mixin provides instances and class methods
+# to register color expressions and operations and to parse these expressions
+# into {Color}s.
 module.exports =
 class ColorParsing extends Mixin
   # The {Array} where color expression handlers are stored
@@ -105,7 +108,7 @@ class ColorParsing extends Mixin
   # start - An optional {Integer} that set the starting index for
   #         the search. Defaults to `0`
   #
-  # Returns an object with the following properties:
+  # Returns an {Object} with the following properties:
   #
   # match - The first color {String} found in the {String}
   # range - An {Array} containing the character index of the start
@@ -135,7 +138,7 @@ class ColorParsing extends Mixin
   # start - An optional {Integer} that set the starting index for
   #         the search. Defaults to `0`
   #
-  # Returns an object with the following properties:
+  # Returns an {Object} with the following properties:
   #
   # match - The first color {String} found in the {String}
   # range - An {Array} containing the character index of the start
@@ -154,7 +157,7 @@ class ColorParsing extends Mixin
   # start - An optional {Integer} that set the starting index for
   #         the search. Defaults to `0`
   #
-  # Returns an object with the following properties:
+  # Returns an {Object} with the following properties:
   #
   # match - The first color {String} found in the {String}
   # range - An {Array} containing the character index of the start
@@ -178,7 +181,7 @@ class ColorParsing extends Mixin
   #            match results {Object} or `undefined` if no matches
   #            was found.
   #
-  # Returns a {Promise} whose value is the match object, containing:
+  # Returns a {Promise} whose value is the match {Object}, containing:
   #
   # match - The first color {String} found in the {String}
   # range - An {Array} containing the character index of the start
@@ -221,7 +224,7 @@ class ColorParsing extends Mixin
   #            match results {Object} or `undefined` if no matches
   #            was found.
   #
-  # Returns a {Promise} whose value is the match object, containing:
+  # Returns a {Promise} whose value is the match {Object}, containing:
   #
   # match - The first color {String} found in the {String}
   # range - An {Array} containing the character index of the start
@@ -244,7 +247,7 @@ class ColorParsing extends Mixin
   #            match results {Object} or `undefined` if no matches
   #            was found.
   #
-  # Returns a {Promise} whose value is the match object, containing:
+  # Returns a {Promise} whose value is the match {Object}, containing:
   #
   # match - The first color {String} found in the {String}
   # range - An {Array} containing the character index of the start

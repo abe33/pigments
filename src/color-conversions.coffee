@@ -3,7 +3,7 @@ Mixin = require 'mixto'
 clamp = (val) ->
   Math.min 1, Math.max(0, val)
 
-# Public: The {ColorConversions} mixin provides methods to convert
+# Internal: The {ColorConversions} mixin provides methods to convert
 # a colors from/into various formats.
 #
 # The mixin currently offer the following conversions:

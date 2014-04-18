@@ -1,4 +1,6 @@
 
+# Internal: A simple mixin that creates a `namedColors` {Object} in the
+# class it extends that contains the color codes of the whole SVG palette.
 module.exports =
 class NamedColors
   @extend: (Color) ->
