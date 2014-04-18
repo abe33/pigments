@@ -55,26 +55,26 @@ class ColorParsing extends Mixin
   #         of the matching {String}
   # argMatches - An {Array} with the arguments matches when the found color
   #              is an operation.
-  @searchColor: (text, start=0) ->
-    found = @searchOperation(text, start)
-    found = @searchExpression(text, start) unless found?
+  @searchColorSync: (text, start=0) ->
+    found = @searchOperationSync(text, start)
+    found = @searchExpressionSync(text, start) unless found?
     found
 
   # Public: Searches for a color expression in `text` using the ones registered
   # previously into the {Color} class.
   #
   # teext,
-  @searchExpression: (text, start=0) ->
+  @searchExpressionSync: (text, start=0) ->
     results = undefined
     @colorExpressions.some (expr) ->
-      return true if results = expr.search(text, start)
+      return true if results = expr.searchSync(text, start)
 
     results
 
-  @searchOperation: (text, start=0) ->
+  @searchOperationSync: (text, start=0) ->
     results = undefined
     @colorOperations.some (operation) ->
-      return true if results = operation.search(text, start)
+      return true if results = operation.searchSync(text, start)
 
     results
 
@@ -88,7 +88,7 @@ class ColorParsing extends Mixin
 
   parseOperation: (colorExpression) ->
     @constructor.colorOperations.some (operation) =>
-      if results = operation.search(colorExpression)
+      if results = operation.searchSync(colorExpression)
         args = results.argMatches.map (res, i) =>
           argType = operation.args[i]
           if argType is @constructor

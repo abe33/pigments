@@ -25,10 +25,10 @@ describe 'Color', ->
     baseColor = undefined
     amount = undefined
 
-  describe '.searchOperation', ->
+  describe '.searchOperationSync', ->
     describe 'with a valid operation in the string', ->
       beforeEach ->
-        @result = Color.searchOperation 'bar, foo(#fff, 20%)'
+        @result = Color.searchOperationSync 'bar, foo(#fff, 20%)'
 
       describe 'the results', ->
         it 'should exist', ->
@@ -44,7 +44,7 @@ describe 'Color', ->
 
     describe 'with nested operations', ->
       beforeEach ->
-        @result = Color.searchOperation 'foo, foo(foo(#fff, 20%), 50%)'
+        @result = Color.searchOperationSync 'foo, foo(foo(#fff, 20%), 50%)'
 
       describe 'the results', ->
         it 'should exist', ->
@@ -64,7 +64,11 @@ describe 'Color', ->
 
     describe 'with something that is not an expression', ->
       beforeEach ->
-        @result = Color.searchOperation
+        @result = Color.searchOperationSync 'foo'
+
+      describe 'the results', ->
+        it 'should be undefined', ->
+          expect(@result).toBeUndefined()
 
   describe 'with an operation defined', ->
     describe 'created with foo(#fff, 20%)', ->

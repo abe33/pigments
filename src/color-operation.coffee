@@ -7,7 +7,7 @@ class ColorOperation
     @onigEnd = new OnigRegExp(@end)
 
   canHandle: (expression) -> @search(expression)?
-  search: (text, start=0) ->
+  searchSync: (text, start=0) ->
     results = undefined
     argMatches = []
 
@@ -15,7 +15,7 @@ class ColorOperation
       start = startMatch[0].end
       for arg in @args
         if arg is @Color
-          argMatch = @Color.searchColor(text, start)
+          argMatch = @Color.searchColorSync(text, start)
         else
           onigRegex = new OnigRegExp(arg)
           match = onigRegex.searchSync(text, start)

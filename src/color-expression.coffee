@@ -6,7 +6,7 @@ class ColorExpression
     @onigRegExp = new OnigRegExp("^#{@regexp}$")
 
   canHandle: (expression) -> @onigRegExp.testSync expression
-  search: (text, start=0) ->
+  searchSync: (text, start=0) ->
     results = undefined
     re = new OnigRegExp(@regexp)
     if match = re.searchSync(text, start)
