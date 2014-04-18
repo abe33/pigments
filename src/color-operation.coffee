@@ -1,3 +1,4 @@
+Q = require 'q'
 {OnigRegExp} = require 'oniguruma'
 
 {comma} = require './regexes'
@@ -11,8 +12,8 @@ class ColorOperation
     @onigEnd = new OnigRegExp('\\G' + @end)
 
   canHandle: (expression) -> @search(expression)?
-  searchSync: (text, start=0) ->
 
+  searchSync: (text, start=0) ->
     while startMatch = @onigBegin.searchSync(text, start)
       argMatches = []
       start = startMatch[0].end
@@ -50,4 +51,15 @@ class ColorOperation
         match: text[range[0]...range[1]]
         argMatches: argMatches
       }
+
     undefined
+
+  search: (text, start=0, callback=->) ->
+    defer = Q.defer()
+
+    setImmediate =>
+      res = @searchSync(text, start)
+      defer.resolve(res)
+      callback(res)
+
+    defer.promise

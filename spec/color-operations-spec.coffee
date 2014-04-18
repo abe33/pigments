@@ -1,3 +1,5 @@
+{OnigRegExp} = require 'oniguruma'
+
 Color = require '../lib/color-model'
 
 {
@@ -24,6 +26,42 @@ describe 'Color', ->
   beforeEach ->
     baseColor = undefined
     amount = undefined
+
+  describe '.searchOperation', ->
+    describe 'with a valid operation in the string', ->
+      it 'should call back with a result', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        Color.searchOperation 'bar, foo(#fff, 20%)', 0, searchCallback
+
+        waitsFor ->
+          searchCallback.callCount is 1
+
+        runs ->
+          result = searchCallback.argsForCall[0][0]
+          expect(result).toBeDefined()
+
+    describe 'with no matches in the string', ->
+      it 'should call back with null', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        Color.searchOperation 'bar', 0, searchCallback
+
+        waitsFor ->
+          searchCallback.callCount is 1
+
+        runs ->
+          result = searchCallback.argsForCall[0][0]
+          expect(result).toBeUndefined()
+
+    describe 'the returned promise', ->
+      it 'should yield the result', ->
+        promise = Color.searchOperation 'bar, foo(#fff, 20%)', 0
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (value) ->
+            expect(value).toBeDefined()
+
 
   describe '.searchOperationSync', ->
     describe 'with a valid operation in the string', ->

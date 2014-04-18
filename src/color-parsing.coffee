@@ -1,4 +1,5 @@
 Mixin = require 'mixto'
+Q = require 'q'
 {OnigRegExp} = require 'oniguruma'
 
 ColorExpression = require './color-expression'
@@ -77,6 +78,15 @@ class ColorParsing extends Mixin
       return true if results = operation.searchSync(text, start)
 
     results
+
+  @searchOperation: (text, start=0, callback=->) ->
+    promise = Q.all @colorOperations.map (op) -> op.search(text, start)
+
+    promise.then (results) ->
+      result = results.filter((el) -> el?)[0]
+      callback(result)
+      result
+
 
   parseExpression: (colorExpression) ->
     @constructor.colorExpressions.some (expr) =>
