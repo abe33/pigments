@@ -2,7 +2,7 @@
   "name": "pigments",
   "version": "1.0.0",
   "description": "A color model for atom packages",
-  "main": "lib/pigments.js",
+  "main": "lib/color-model.js",
   "scripts": {
     "test": "grunt test"
   },
