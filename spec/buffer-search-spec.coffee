@@ -69,3 +69,20 @@ describe 'Color', ->
                 'rgba(0,0,0,1)'
                 'transparentize(red, 0.5)'
               ])
+
+  describe '.scanBufferForColors', ->
+    describe 'the passed-in callback', ->
+      it 'should have been called twice', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        waitsFor -> not promise.isPending()
+        runs ->
+          expect(searchCallback.callCount).toEqual(3)
+          promise.then (results) ->
+            res = results.map (m) -> m.match
+            expect(res).toEqual([
+              '#fff'
+              'rgba(0,0,0,1)'
+              'transparentize(red, 0.5)'
+            ])

@@ -42,6 +42,19 @@ class ColorParsing extends Mixin
   @addOperation: (begin, args..., end, handle=->) ->
     @colorOperations.push new ColorOperation(begin, args, end, handle, this)
 
+  @scanBufferForColors: (buffer, callback) ->
+    @scanBufferForColorsInRange(buffer,range=[[0, 0], [Infinity, Infinity]], callback)
+
+  # Public: Scans the passed-in {Buffer} for {Color}s within the given
+  # {Range}.
+  #
+  # buffer - The {Buffer} object into which performing the search
+  # range - The {Range} into which searching for colors.
+  # callback - An optional {Function} that will be called for each match
+  #            in the buffer with the result {Object} of the match.
+  #
+  # Returns a promise whose value will be an {Array} containing all the
+  # found matches.
   @scanBufferForColorsInRange: (buffer, range=[[0, 0], [Infinity, Infinity]], callback=->) ->
     throw new Error 'Missing buffer' unless buffer?
     Range = buffer.constructor.Range
