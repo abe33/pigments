@@ -97,6 +97,29 @@ describe 'Color', ->
           promise.then (value) ->
             expect(value).toBeDefined()
 
+  describe 'searchColor', ->
+    describe 'with a color in an operation', ->
+      it 'should yield the operation and not the color', ->
+        promise = Color.searchColor 'bar, foo(#fff, 20%)', 0
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (value) ->
+            expect(value).toBeDefined()
+            expect(value.match).toBe('foo(#fff, 20%)')
+
+    describe 'with only a color', ->
+      it 'should yield the the color', ->
+        promise = Color.searchColor 'bar, #fff, 20%', 0
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (value) ->
+            expect(value).toBeDefined()
+            expect(value.match).toBe('#fff')
+
 
   describe '.searchOperationSync', ->
     describe 'with a valid operation in the string', ->

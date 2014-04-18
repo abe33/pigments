@@ -79,6 +79,14 @@ class ColorParsing extends Mixin
 
     results
 
+  @searchColor: (text, start=0, callback=->) ->
+    @searchOperation(text, start)
+    .then (result) =>
+      if result? then result else @searchExpression(text, start)
+    .then (result) ->
+      callback(result)
+      result
+
   @searchExpression: (text, start=0, callback=->) ->
     promise = Q.all @colorExpressions.map (expr) -> expr.search(text, start)
 
