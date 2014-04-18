@@ -6,8 +6,8 @@ module.exports =
   int: int
   float: float
   percent: percent
-  intOrPercent: "(#{int}|#{percent})"
-  floatOrPercent: "(#{float}|#{percent})"
+  intOrPercent: "(#{percent}|#{int})"
+  floatOrPercent: "(#{percent}|#{float})"
   comma: '\\s*,\\s*'
   notQuote: "[^\"'\n]*"
   hexa: '[\\da-fA-F]'
