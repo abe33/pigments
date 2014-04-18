@@ -24,9 +24,21 @@ class ColorExpression
   search: (text, start=0, callback=->) ->
     defer = Q.defer()
 
-    setImmediate =>
-      res = @searchSync(text, start)
-      defer.resolve(res)
-      callback(res)
+    re = new OnigRegExp(@regexp)
+    re.search text, start, (err, match) ->
+      unless match?
+        defer.resolve()
+        callback()
+        return
+
+      [match] = match
+
+      range = [match.start, match.end]
+      results =
+        range: range
+        match: text[range[0]...range[1]]
+
+      defer.resolve(results)
+      callback(results)
 
     defer.promise
