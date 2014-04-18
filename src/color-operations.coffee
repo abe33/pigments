@@ -67,15 +67,14 @@ Color.addOperation "\\badjust-hue#{ps}", Color, "(-?#{int})deg", pe, (color, [ba
   color.hsl = [(h + amount) % 360, s, l]
   color.alpha = baseColor.alpha
 
-# mix(#f00, #00F, 25%)
-Color.addOperation "\\bmix#{ps}", Color, Color, floatOrPercent, pe, (color, [baseColor1, baseColor2, amount]) ->
-  amount = parseFloatOrPercent amount
-  color.rgba = Color.mixColors(baseColor1, baseColor2, amount).rgba
-
 # mix(#f00, #00F)
 Color.addOperation "\\bmix#{ps}", Color, Color, pe, (color, [baseColor1, baseColor2]) ->
   color.rgba = Color.mixColors(baseColor1, baseColor2, 0.5).rgba
 
+# mix(#f00, #00F, 25%)
+Color.addOperation "\\bmix#{ps}", Color, Color, floatOrPercent, pe, (color, [baseColor1, baseColor2, amount]) ->
+  amount = parseFloatOrPercent amount
+  color.rgba = Color.mixColors(baseColor1, baseColor2, amount).rgba
 
 # tint(red, 50%)
 Color.addOperation "\\btint#{ps}", Color, floatOrPercent, pe, (color, [baseColor, amount]) ->
