@@ -8,10 +8,11 @@ module.exports =
 class ColorExpression
   # Public: Creates the expression.
   #
+  # name - A {String that identify the expression}
   # regexp - The oniguruma regexp {String} that match the expression
   # handle - A {Function} that will be called to modify a {Color} accordingly
   #          to a {String} previsouly matched by this expression.
-  constructor: (@regexp, @handle) ->
+  constructor: (@name, @regexp, @handle) ->
     @onigRegExp = new OnigRegExp("^#{@regexp}$")
 
   # Public: Returns `true` if the current {ColorExpression} can handle

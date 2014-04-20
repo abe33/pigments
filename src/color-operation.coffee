@@ -11,6 +11,7 @@ module.exports =
 class ColorOperation
   # Public: Creates a {ColorOperation}.
   #
+  # name - A {String} that identify the operation
   # begin - An {OnigRegExp} {String} that matches the start of the operation.
   # args... - A list of arguments for the operation. An argument can be either
   #           a reference to the {Color} class or an {OnigRegExp} {String}.
@@ -21,7 +22,7 @@ class ColorOperation
   #          arguments passed to the operation. When the registered argument is
   #          {Color}, the argument value will be parsed automatically as
   #          a {Color}.
-  constructor: (@begin, @args, @end, @handle, @Color) ->
+  constructor: (@name, @begin, @args, @end, @handle, @Color) ->
     @onigBegin = new OnigRegExp(@begin)
     @onigEnd = new OnigRegExp('\\G' + @end)
 

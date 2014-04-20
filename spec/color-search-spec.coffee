@@ -18,7 +18,7 @@ Color = require '../lib/color-model'
 baseColor = null
 amount = null
 
-Color.addOperation '\\bfoo\\(', Color, floatOrPercent, '\\)', (color, [a, b]) =>
+Color.addOperation 'dummy', '\\bfoo\\(', Color, floatOrPercent, '\\)', (color, [a, b]) =>
   baseColor = a
   amount = b
 

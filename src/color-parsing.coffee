@@ -10,28 +10,30 @@ ColorOperation = require './color-operation'
 # into {Color}s.
 module.exports =
 class ColorParsing extends Mixin
-  # The {Array} where color expression handlers are stored
-  @colorExpressions: []
+  # The {Object} where color expression handlers are stored
+  @colorExpressions: {}
 
-  # The {Array} where color operation handlers are stored
-  @colorOperations: []
+  # The {Object} where color operation handlers are stored
+  @colorOperations: {}
 
   # Public: Registers a color expression into the {Color} class.
   # The function will create an expression handler with the passed-in
   # arguments.
   #
+  # name - A {String} to identify the expression
   # regexp - An {OnigRegExp} {String} that matches the color notation. The
   #          expression can capture groups that will be used later in the
   #          color parsing phase
   # handle - A {Function} that takes a {Color} to modify and the {String}
   #          that matched during the lookup phase
-  @addExpression: (regexp, handle=->) ->
-    @colorExpressions.push new ColorExpression(regexp, handle)
+  @addExpression: (name, regexp, handle=->) ->
+    @colorExpressions[name] = new ColorExpression(name, regexp, handle)
 
   # Public: Registers a color operation into the {Color} class.
   # The function will create an operation handler with the passed-in
   # arguments.
   #
+  # name - A {String} that identify the operation
   # begin - An {OnigRegExp} {String} that matches the start of the operation.
   # args... - A list of arguments for the operation. An argument can be either
   #           a reference to the {Color} class or an {OnigRegExp} {String}.
@@ -42,8 +44,8 @@ class ColorParsing extends Mixin
   #          arguments passed to the operation. When the registered argument is
   #          {Color}, the argument value will be parsed automatically as
   #          a {Color}.
-  @addOperation: (begin, args..., end, handle=->) ->
-    @colorOperations.push new ColorOperation(begin, args, end, handle, this)
+  @addOperation: (name, begin, args..., end, handle=->) ->
+    @colorOperations[name] = new ColorOperation(name, begin, args, end, handle, this)
 
   # Public: Scans the passed-in {Buffer} for {Color}s.
   #
@@ -145,8 +147,8 @@ class ColorParsing extends Mixin
   #         and end of the matching {String}
   @searchExpressionSync: (text, start=0) ->
     results = undefined
-    @colorExpressions.some (expr) ->
-      return true if results = expr.searchSync(text, start)
+    for name, expr of @colorExpressions
+      break if results = expr.searchSync(text, start)
 
     results
 
@@ -166,8 +168,8 @@ class ColorParsing extends Mixin
   #              arguments.
   @searchOperationSync: (text, start=0) ->
     results = undefined
-    @colorOperations.some (operation) ->
-      return true if results = operation.searchSync(text, start)
+    for name, operation of @colorOperations
+      break if results = operation.searchSync(text, start)
 
     results
 
@@ -230,7 +232,7 @@ class ColorParsing extends Mixin
   # range - An {Array} containing the character index of the start
   #         and end of the matching {String}
   @searchExpression: (text, start=0, callback=->) ->
-    promise = Q.all @colorExpressions.map (expr) -> expr.search(text, start)
+    promise = Q.all (expr.search(text, start) for k,expr of @colorExpressions)
 
     promise.then (results) ->
       result = results.filter((el) -> el?)[0]
@@ -255,7 +257,7 @@ class ColorParsing extends Mixin
   # argMatches - An {Array} with the arguments matches when the found
   #              color is an operation.
   @searchOperation: (text, start=0, callback=->) ->
-    promise = Q.all @colorOperations.map (op) -> op.search(text, start)
+    promise = Q.all (op.search(text, start) for name,op of @colorOperations)
 
     promise.then (results) ->
       result = results.filter((el) -> el?)[0]
@@ -267,19 +269,17 @@ class ColorParsing extends Mixin
   #
   # colorExpression - A {String} to parse
   parseExpression: (colorExpression) ->
-    @constructor.colorExpressions.some (expr) =>
+    for name, expr of @constructor.colorExpressions
       if expr.canHandle(colorExpression)
         expr.handle(this, colorExpression)
-        return true
-
-      false
+        return
 
   # Internal: Parse a color operation and modify this {Color} object
   # accordingly.
   #
   # colorExpression - A {String} to parse
   parseOperation: (colorExpression) ->
-    @constructor.colorOperations.some (operation) =>
+    for name, operation of @constructor.colorOperations
       if results = operation.searchSync(colorExpression)
         args = results.argMatches.map (res, i) =>
           argType = operation.args[i]
@@ -289,6 +289,4 @@ class ColorParsing extends Mixin
             res.match
 
         operation.handle(this, args)
-        return true
-
-      false
+        return
