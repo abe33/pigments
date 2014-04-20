@@ -29,6 +29,11 @@ class ColorParsing extends Mixin
   @addExpression: (name, regexp, handle=->) ->
     @colorExpressions[name] = new ColorExpression(name, regexp, handle)
 
+  # Public: Removes an expression using the passed-in `name`.
+  #
+  # name - A {String} identifying the expression to remove
+  @removeExpression: (name) -> delete @colorExpressions[name]
+
   # Public: Registers a color operation into the {Color} class.
   # The function will create an operation handler with the passed-in
   # arguments.
@@ -46,6 +51,11 @@ class ColorParsing extends Mixin
   #          a {Color}.
   @addOperation: (name, begin, args..., end, handle=->) ->
     @colorOperations[name] = new ColorOperation(name, begin, args, end, handle, this)
+
+  # Public: Removes an operation using the passed-in `name`.
+  #
+  # name - A {String} identifying the operation to remove
+  @removeOperation: (name) -> delete @colorOperations[name]
 
   # Public: Scans the passed-in {Buffer} for {Color}s.
   #
