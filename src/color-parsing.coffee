@@ -156,11 +156,15 @@ class ColorParsing extends Mixin
   # range - An {Array} containing the character index of the start
   #         and end of the matching {String}
   @searchExpressionSync: (text, start=0) ->
-    results = undefined
-    for name, expr of @colorExpressions
-      break if results = expr.searchSync(text, start)
+    results = (expr.searchSync(text, start) for name, expr of @colorExpressions)
 
-    results
+    results = results
+    .filter (el) ->
+      el?
+    .sort (a,b) ->
+      a.range[0] - b.range[0]
+
+    results[0]
 
   # Public: Searches for a color operation in `text` synchronously using
   # the ones registered previously into the {Color} class.
@@ -177,11 +181,15 @@ class ColorParsing extends Mixin
   # argMatches - An {Array} containing the submatches for the operation
   #              arguments.
   @searchOperationSync: (text, start=0) ->
-    results = undefined
-    for name, operation of @colorOperations
-      break if results = operation.searchSync(text, start)
+    results = (operation.searchSync(text, start) for name, operation of @colorOperations)
 
-    results
+    results = results
+    .filter (el) ->
+      el?
+    .sort (a,b) ->
+      a.range[0] - b.range[0]
+
+    results[0]
 
   # Public: Searches for a {Color} in `text` asynchronously using
   # all the expressions and operations registered in the {Color} class.
@@ -245,7 +253,13 @@ class ColorParsing extends Mixin
     promise = Q.all (expr.search(text, start) for k,expr of @colorExpressions)
 
     promise.then (results) ->
-      result = results.filter((el) -> el?)[0]
+      result = results
+      .filter (el) ->
+        el?
+      .sort (a,b) ->
+        a.range[0] - b.range[0]
+
+      result = result[0]
       callback(result)
       result
 
@@ -270,7 +284,14 @@ class ColorParsing extends Mixin
     promise = Q.all (op.search(text, start) for name,op of @colorOperations)
 
     promise.then (results) ->
-      result = results.filter((el) -> el?)[0]
+      result = results
+      .filter (el) ->
+        el?
+      .sort (a,b) ->
+        a.range[0] - b.range[0]
+
+      result = result[0]
+
       callback(result)
       result
 
