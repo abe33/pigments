@@ -108,11 +108,88 @@ class ColorOperation
   # argMatches - An {Array} containing the submatches for the operation
   #              arguments.
   search: (text, start=0, callback=->) ->
-    defer = Q.defer()
 
-    setImmediate =>
-      res = @searchSync(text, start)
-      defer.resolve(res)
-      callback(res)
+    verifyArgument = (arg, isLast=false) => =>
+      defer = Q.defer()
+
+      if arg is @Color
+        @Color.searchColor text, start, (argMatch) ->
+          return defer.reject("Can't find Color argument at #{start}") unless argMatch?
+
+          [_, start] = argMatch.range
+
+          unless isLast
+            commaRegexp.search text, start, (err, commaMatch) ->
+              return defer.reject(err) if err?
+              return defer.reject("Can't find comma at #{start}") unless commaMatch?
+              start = commaMatch[0].end
+              defer.resolve(argMatch)
+
+          else
+            defer.resolve(argMatch)
+
+      else
+        onigRegex = new OnigRegExp('\\G' + arg)
+        onigRegex.search text, start, (err, match) ->
+          return defer.reject(err) if err?
+          return defer.reject("Can't find argument '#{arg}' at #{start}") unless match?
+
+          range = [match[0].start, match[0].end]
+          argMatch =
+            range: range
+            match: text[range[0]...range[1]]
+
+          [_, start] = argMatch.range
+
+          unless isLast
+            commaRegexp.search text, start, (err, commaMatch) ->
+              return defer.reject(err) if err?
+              return defer.reject("Can't find comma at #{start}") unless commaMatch?
+
+              start = commaMatch[0].end
+              defer.resolve(argMatch)
+
+          else
+            defer.resolve(argMatch)
+
+      defer.promise
+
+    defer = Q.defer()
+    results = undefined
+    iterate = =>
+      @onigBegin.search text, start, (err, startMatch) =>
+        argMatches = []
+        if startMatch?
+          start = startMatch[0].end
+
+          p = Q.fcall(->)
+
+          for arg,i in @args
+            p = p
+            .then(verifyArgument(arg, i is @args.length - 1))
+            .then (argMatch) ->
+              argMatches.push argMatch
+
+          p
+          .then (results) =>
+            @onigEnd.search text, start, (err, endMatch) ->
+              return defer.reject(err) if err?
+              return defer.reject("Can't find end match at #{start}") unless endMatch?
+
+              range = [startMatch[0].start, endMatch[0].end]
+              defer.resolve {
+                range: range
+                match: text[range[0]...range[1]]
+                argMatches: argMatches
+              }
+
+          .fail (e) ->
+            setImmediate ->
+              iterate()
+
+        else
+          defer.resolve()
+
+    iterate()
 
     defer.promise
