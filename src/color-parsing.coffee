@@ -13,9 +13,6 @@ class ColorParsing extends Mixin
   # The {Object} where color expression handlers are stored
   @colorExpressions: {}
 
-  # The {Object} where color operation handlers are stored
-  @colorOperations: {}
-
   # Public: Registers a color expression into the {Color} class.
   # The function will create an expression handler with the passed-in
   # arguments.
@@ -33,29 +30,6 @@ class ColorParsing extends Mixin
   #
   # name - A {String} identifying the expression to remove
   @removeExpression: (name) -> delete @colorExpressions[name]
-
-  # Public: Registers a color operation into the {Color} class.
-  # The function will create an operation handler with the passed-in
-  # arguments.
-  #
-  # name - A {String} that identify the operation
-  # begin - An {OnigRegExp} {String} that matches the start of the operation.
-  # args... - A list of arguments for the operation. An argument can be either
-  #           a reference to the {Color} class or an {OnigRegExp} {String}.
-  #           When {Color} is passed, the argument will search for any
-  #           operation forms registered in the {Color} class.
-  # end - An {OnigRegExp} {String} that matches the end of the operation
-  # handle - A {Function} that takes a {Color} to modify and an array of the
-  #          arguments passed to the operation. When the registered argument is
-  #          {Color}, the argument value will be parsed automatically as
-  #          a {Color}.
-  @addOperation: (name, begin, args..., end, handle=->) ->
-    @colorOperations[name] = new ColorOperation(name, begin, args, end, handle, this)
-
-  # Public: Removes an operation using the passed-in `name`.
-  #
-  # name - A {String} identifying the operation to remove
-  @removeOperation: (name) -> delete @colorOperations[name]
 
   # Public: Scans the passed-in {Buffer} for {Color}s.
   #
@@ -128,20 +102,8 @@ class ColorParsing extends Mixin
   # argMatches - An {Array} with the arguments matches when the found
   #              color is an operation.
   @searchColorSync: (text, start=0) ->
-    foundOp = @searchOperationSync(text, start)
-    foundExpr = @searchExpressionSync(text, start)
+    @searchExpressionSync(text, start)
 
-    if foundOp? and foundExpr?
-      if foundOp.range[0] < foundExpr.range[0]
-        foundOp
-      else
-        foundExpr
-    else if foundOp?
-      foundOp
-    else if foundExpr?
-      foundExpr
-    else
-      undefined
 
   # Public: Searches for a color expression in `text` synchronously using
   # the ones registered previously into the {Color} class.
@@ -156,40 +118,19 @@ class ColorParsing extends Mixin
   # range - An {Array} containing the character index of the start
   #         and end of the matching {String}
   @searchExpressionSync: (text, start=0) ->
-    results = (expr.searchSync(text, start) for name, expr of @colorExpressions)
+    ore = new OnigRegExp(@colorRegExp())
+    matches = ore.searchSync(text, start)
 
-    results = results
-    .filter (el) ->
-      el?
-    .sort (a,b) ->
-      a.range[0] - b.range[0]
+    return unless matches?
 
-    results[0]
+    [match] = matches
+    matchText = match.match
 
-  # Public: Searches for a color operation in `text` synchronously using
-  # the ones registered previously into the {Color} class.
-  #
-  # text - A {String} into which performing the search
-  # start - An optional {Integer} that set the starting index for
-  #         the search. Defaults to `0`
-  #
-  # Returns an {Object} with the following properties:
-  #
-  # match - The first color {String} found in the {String}
-  # range - An {Array} containing the character index of the start
-  #         and end of the matching {String}
-  # argMatches - An {Array} containing the submatches for the operation
-  #              arguments.
-  @searchOperationSync: (text, start=0) ->
-    results = (operation.searchSync(text, start) for name, operation of @colorOperations)
+    {
+      match: matchText
+      range: [match.start, match.end]
+    }
 
-    results = results
-    .filter (el) ->
-      el?
-    .sort (a,b) ->
-      a.range[0] - b.range[0]
-
-    results[0]
 
   # Public: Searches for a {Color} in `text` asynchronously using
   # all the expressions and operations registered in the {Color} class.
@@ -212,25 +153,8 @@ class ColorParsing extends Mixin
     foundOp = undefined
     foundExpr = undefined
 
-    @searchOperation(text, start)
-    .then (result) =>
-      foundOp = result
-      @searchExpression(text, start)
+    @searchExpression(text, start)
     .then (result) ->
-      foundExpr = result
-
-      result = if foundOp? and foundExpr?
-        if foundOp.range[0] < foundExpr.range[0]
-          foundOp
-        else
-          foundExpr
-      else if foundOp?
-        foundOp
-      else if foundExpr?
-        foundExpr
-      else
-        undefined
-
       callback(result)
       result
 
@@ -250,50 +174,27 @@ class ColorParsing extends Mixin
   # range - An {Array} containing the character index of the start
   #         and end of the matching {String}
   @searchExpression: (text, start=0, callback=->) ->
-    promise = Q.all (expr.search(text, start) for k,expr of @colorExpressions)
+    defer = Q.defer()
+    ore = new OnigRegExp(@colorRegExp())
+    ore.search text, start, (err, matches) ->
+      return defer.reject(err) if err?
 
-    promise.then (results) ->
-      result = results
-      .filter (el) ->
-        el?
-      .sort (a,b) ->
-        a.range[0] - b.range[0]
+      unless matches?
+        callback()
+        return defer.resolve()
 
-      result = result[0]
-      callback(result)
-      result
+      [match] = matches
 
-  # Public: Searches for a {Color} in `text` asynchronously using
-  # all the operations registered in the {Color} class.
-  #
-  # text - The {String} into which performing the search.
-  # start - An optional {Integer} that set the starting index for
-  #         the search. Defaults to `0`
-  # callback - An optional {Function} that will be called with the
-  #            match results {Object} or `undefined` if no matches
-  #            was found.
-  #
-  # Returns a {Promise} whose value is the match {Object}, containing:
-  #
-  # match - The first color {String} found in the {String}
-  # range - An {Array} containing the character index of the start
-  #         and end of the matching {String}
-  # argMatches - An {Array} with the arguments matches when the found
-  #              color is an operation.
-  @searchOperation: (text, start=0, callback=->) ->
-    promise = Q.all (op.search(text, start) for name,op of @colorOperations)
+      matchText = match.match
 
-    promise.then (results) ->
-      result = results
-      .filter (el) ->
-        el?
-      .sort (a,b) ->
-        a.range[0] - b.range[0]
+      result = {
+        match: matchText
+        range: [match.start, match.end]
+      }
+      callback result
+      defer.resolve result
 
-      result = result[0]
-
-      callback(result)
-      result
+    defer.promise
 
   # Internal: Parse a color expression and modify this {Color} object
   # accordingly.
@@ -303,21 +204,4 @@ class ColorParsing extends Mixin
     for name, expr of @constructor.colorExpressions
       if expr.canHandle(colorExpression)
         expr.handle(this, colorExpression)
-        return
-
-  # Internal: Parse a color operation and modify this {Color} object
-  # accordingly.
-  #
-  # colorExpression - A {String} to parse
-  parseOperation: (colorExpression) ->
-    for name, operation of @constructor.colorOperations
-      if results = operation.searchSync(colorExpression)
-        args = results.argMatches.map (res, i) =>
-          argType = operation.args[i]
-          if argType is @constructor
-            new @constructor res.match
-          else
-            res.match
-
-        operation.handle(this, args)
         return

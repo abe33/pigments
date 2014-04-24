@@ -20,10 +20,11 @@ class Color
   # separated with `|`. This is this regexp that will be used to scan buffers
   # and find color expressions.
   @colorRegExp: ->
-    @colorExpressions.map((expr) -> "(#{expr.regexp})" ).join('|')
+    ("(#{expr.regexp})" for k,expr of @colorExpressions).join('|')
 
   @canHandle: (colorExpression) ->
-    @colorExpressions.some (expr) -> expr.canHandle(colorExpression)
+    return true if expr.canHandle(colorExpression) for k,expr of @colorExpressions
+    false
 
   @mixColors: (color1, color2, amount=0.5) ->
     inverse = 1 - amount
@@ -127,8 +128,7 @@ class Color
     [@red, @green, @blue, @alpha] = [0, 0, 0, 1]
 
     if colorExpression?
-      found = @parseOperation(colorExpression)
-      @parseExpression(colorExpression) unless found
+      @parseExpression(colorExpression)
 
   # Public: Returns a {String} reprensenting the color with the CSS `rgba`
   # notation.

@@ -1,9 +1,11 @@
+fs = require 'fs'
+path = require 'path'
 TextBuffer = require 'text-buffer'
 
 Color = require '../lib/color-model'
 
-require '../lib/color-expressions'
 require '../lib/color-operations'
+require '../lib/color-expressions'
 
 describe 'Color', ->
   beforeEach ->
@@ -91,3 +93,16 @@ describe 'Color', ->
               'transparentize(red, 0.5)'
               '#000'
             ])
+
+  describe 'with a big buffer', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: fs.readFileSync(path.resolve __dirname, './fixtures/real_world_example.coffee').toString()
+
+    it 'should have been called four times', ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+      waitsFor -> not promise.isPending()
+
+      runs ->
+        expect(true).toEqual(true)
