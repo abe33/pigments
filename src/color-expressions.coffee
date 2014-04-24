@@ -190,7 +190,7 @@ Color.addExpression 'vec4', strip("
 # black
 colors = Object.keys(Color.namedColors)
 
-colorRegexp = "\\b(?<![\\.\\$@-])(?i)(#{colors.join('|')})(?-i)(?![-\\.:=])\\b"
+colorRegexp = "\\b(?<![\\.\\$@-])(?i)(#{colors.join('|')})(?-i)(?!\\s*[-\\.:=])\\b"
 
 Color.addExpression 'named_colors', colorRegexp, (color, expression) ->
   [_,name] = @onigRegExp.searchSync(expression)
