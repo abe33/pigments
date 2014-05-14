@@ -130,6 +130,26 @@ class Color
     if colorExpression?
       @parseExpression(colorExpression)
 
+  # Public: Returns the luma value for the current color
+  luma: ->
+    r = @[0] / 255
+    g = @[1] / 255
+    b = @[2] / 255
+    r = if r <= 0.03928
+      r / 12.92
+    else
+      Math.pow(((r + 0.055) / 1.055), 2.4)
+    g = if g <= 0.03928
+      g / 12.92
+    else
+      Math.pow(((g + 0.055) / 1.055), 2.4)
+    b = if b <= 0.03928
+      b / 12.92
+    else
+      Math.pow(((b + 0.055) / 1.055), 2.4)
+
+    0.2126 * r + 0.7152 * g + 0.0722 * b
+
   # Public: Returns a {String} reprensenting the color with the CSS `rgba`
   # notation.
   toCSS: ->
