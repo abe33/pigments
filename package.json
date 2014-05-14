@@ -1,6 +1,6 @@
 {
   "name": "pigments",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "A color model for atom packages",
   "main": "lib/index.js",
   "scripts": {
