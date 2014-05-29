@@ -49,6 +49,18 @@ describe 'Color', ->
           result = searchCallback.argsForCall[0][0]
           expect(result).toBeUndefined()
 
+    describe 'with a string looking like a color but is not', ->
+      it 'should call back with null', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        Color.searchExpression '#addUser, #faddedUser', 0, searchCallback
+
+        waitsFor ->
+          searchCallback.callCount is 1
+
+        runs ->
+          result = searchCallback.argsForCall[0][0]
+          expect(result).toBeUndefined()
+
     describe 'the returned promise', ->
       it 'should yield the result', ->
         promise = Color.searchExpression 'bar, foo(#fff, 20%)', 0

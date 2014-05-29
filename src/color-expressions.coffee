@@ -23,13 +23,13 @@ Color = require './color-model'
 } = require './utils'
 
 # #000000
-Color.addExpression 'css_hexa_6', "#(#{hexa}{6})(?!#{hexa})", (color, expression) ->
+Color.addExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (color, expression) ->
   [_, hexa] = @onigRegExp.searchSync(expression)
 
   color.hex = hexa.match
 
 # #000
-Color.addExpression 'css_hexa_3', "#(#{hexa}{3})(?!#{hexa})", (color, expression) ->
+Color.addExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (color, expression) ->
   [_, hexa] = @onigRegExp.searchSync(expression)
   colorAsInt = parseInt(hexa.match, 16)
 
