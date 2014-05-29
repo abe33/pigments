@@ -1,3 +1,14 @@
+<a name="v1.4.1"></a>
+# v1.4.1 (2014-05-29)
+
+## :sparkles: Features
+
+- Add a CHANGELOG file ([81d5107a](https://github.com/abe33/pigments/commit/81d5107a35e81a7c0c6fca379b759b73420e8b60))
+
+## :bug: Bug Fixes
+
+- Fix invalid match with hexa colors ([c3dfbc23](https://github.com/abe33/pigments/commit/c3dfbc23931d38081b3bc9e5040c51d902a8b5c3), Closes [abe33/atom-color-highlight#12](https://github.com/abe33/atom-color-highlight/issues/12))
+
 <a name="v1.4.0"></a>
 # v1.4.0 (2014-05-29)
 
