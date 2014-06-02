@@ -2,6 +2,7 @@ _ = require 'underscore-plus'
 PropertyAccessors = require 'property-accessors'
 ColorConversions = require './color-conversions'
 ColorParsing = require './color-parsing'
+ColorVariablesParsing = require './color-variables-parsing'
 NamedColors = require './named-colors'
 {OnigRegExp} = require 'oniguruma'
 
@@ -14,6 +15,7 @@ class Color
   PropertyAccessors.includeInto(this)
   ColorConversions.extend(this)
   ColorParsing.includeInto(this)
+  ColorVariablesParsing.includeInto(this)
   NamedColors.extend(this)
 
   # Public: Returns a {RegExp} that contains all the registered expressions
