@@ -104,7 +104,7 @@ describe 'Color', ->
         runs ->
           expect(true).toEqual(true)
 
-  xdescribe '.scanBufferForColorVariables', ->
+  describe '.scanBufferForColorVariables', ->
     describe 'with a buffer containing less variables', ->
       beforeEach ->
         @buffer = new TextBuffer text: """
