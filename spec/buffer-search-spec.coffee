@@ -115,7 +115,7 @@ describe 'Color', ->
         @not_a_color: 10px;
         """
 
-      it 'calls the callback two times', ->
+      it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
 
@@ -128,3 +128,79 @@ describe 'Color', ->
               '@red': '#f00'
               '@light_red': 'lighten(@red, 10%)'
             })
+            done()
+
+    describe 'with a buffer containing sass variables', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        $red: #f00
+
+        $light_red: lighten($red, 10%)
+
+        $not_a_color: 10px
+        """
+
+      it 'calls the callback two times', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          expect(searchCallback.callCount).toEqual(2)
+          promise.then (results) ->
+            expect(results).toEqual({
+              '$red': '#f00'
+              '$light_red': 'lighten($red, 10%)'
+            })
+            done()
+
+    describe 'with a buffer containing scss variables', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        $red: #f00;
+
+        $light_red: lighten($red, 10%);
+
+        $not_a_color: 10px;
+        """
+
+      it 'calls the callback two times', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          expect(searchCallback.callCount).toEqual(2)
+          promise.then (results) ->
+            expect(results).toEqual({
+              '$red': '#f00'
+              '$light_red': 'lighten($red, 10%)'
+            })
+            done()
+
+    describe 'with a buffer containing scss variables', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        red = #f00
+
+        light_red= lighten(red, 10%);
+
+        not_a_color = 10px
+        """
+
+      it 'calls the callback two times', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          expect(searchCallback.callCount).toEqual(2)
+          promise.then (results) ->
+            expect(results).toEqual({
+              'red': '#f00'
+              'light_red': 'lighten(red, 10%)'
+            })
+            done()

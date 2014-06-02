@@ -9,9 +9,11 @@ module.exports =
 class ColorVariablesParsing extends Mixin
   @variableExpressions: {}
 
-  @addVariableExpression: (name, key, separator, value, endLine) -> @variableExpressions[name] = {key, separator, value, endLine}
+  @addVariableExpression: (name, regexp) ->
+    @variableExpressions[name] = regexp
 
-  @removeVariableExpression: (name) -> delete @variableExpressions[name]
+  @removeVariableExpression: (name) ->
+    delete @variableExpressions[name]
 
   @scanBufferForColorVariables: (buffer, callback) ->
     @scanBufferForColorVariablesInRange(buffer, [[0, 0], [Infinity, Infinity]], callback)
@@ -35,10 +37,10 @@ class ColorVariablesParsing extends Mixin
         defer.reject(err) if err?
 
         if match?
-          [_, key, _, value] = match
+          [key, value] = @extractVariableElements(match[0].match)
 
-          if @canHandle(value.match)
-            results[key.match] = value.match
+          if @canHandle(value)
+            results[key] = value
             cb?(match)
 
           searchOccurences(str, cb, match[0].end)
@@ -49,17 +51,17 @@ class ColorVariablesParsing extends Mixin
 
     defer.promise
 
+  @extractVariableElements: (string) ->
+    for k,re of @variableExpressions
+      ore = new OnigRegExp(re)
+      m = ore.searchSync(string)
+      if m?
+        [_, key, value] = m
+        return [key.match, value.match]
+
+    null
+
+
   @getVariableExpressionsRegexp: ->
-    keys = []
-    values = []
-    separators = []
-    endLines = []
-
-    for k,{key, separator, value, endLine} of @variableExpressions
-      keys.push key
-      values.push value
-      separators.push separator
-      endLines.push endLine
-
-    regex = "(#{keys.join '|'})(#{separators.join '|'})(#{values.join '|'})(#{endLines.join '|'})"
-    new OnigRegExp(regex)
+    regex = (v for k,v of @variableExpressions).join('|')
+    new OnigRegExp("(#{regex})")
