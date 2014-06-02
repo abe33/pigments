@@ -40,7 +40,7 @@ class ColorParsing extends Mixin
   # Returns a {Promise} whose value will be an {Array} containing all the
   # found matches.
   @scanBufferForColors: (buffer, callback) ->
-    @scanBufferForColorsInRange(buffer,range=[[0, 0], [Infinity, Infinity]], callback)
+    @scanBufferForColorsInRange(buffer, [[0, 0], [Infinity, Infinity]], callback)
 
   # Public: Scans the passed-in {Buffer} for {Color}s within the given
   # {Range}.
