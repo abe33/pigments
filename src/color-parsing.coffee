@@ -150,13 +150,7 @@ class ColorParsing extends Mixin
   # argMatches - An {Array} with the arguments matches when the found
   #              color is an operation.
   @searchColor: (text, start=0, callback=->) ->
-    foundOp = undefined
-    foundExpr = undefined
-
-    @searchExpression(text, start)
-    .then (result) ->
-      callback(result)
-      result
+    @searchExpression(text, start, callback)
 
   # Public: Searches for a {Color} in `text` asynchronously using
   # all the expressions registered in the {Color} class.
