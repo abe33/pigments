@@ -26,7 +26,7 @@ describe 'Color', ->
 
   describe 'searchExpression', ->
     describe 'with a valid operation in the string', ->
-      it 'should call back with a result', ->
+      it 'calls back with a result', ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression 'bar, foo(#fff, 20%)', 0, searchCallback
 
@@ -38,7 +38,7 @@ describe 'Color', ->
           expect(result).toBeDefined()
 
     describe 'with no matches in the string', ->
-      it 'should call back with null', ->
+      it 'calls back with null', ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression 'bar', 0, searchCallback
 
@@ -50,7 +50,7 @@ describe 'Color', ->
           expect(result).toBeUndefined()
 
     describe 'with a string looking like a color but is not', ->
-      it 'should call back with null', ->
+      it 'calls back with null', ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression '#addUser, #faddedUser', 0, searchCallback
 
@@ -62,7 +62,7 @@ describe 'Color', ->
           expect(result).toBeUndefined()
 
     describe 'the returned promise', ->
-      it 'should yield the result', ->
+      it 'yields the result', ->
         promise = Color.searchExpression 'bar, foo(#fff, 20%)', 0
 
         waitsFor -> not promise.isPending()
@@ -71,7 +71,7 @@ describe 'Color', ->
           promise.then (value) ->
             expect(value).toBeDefined()
     describe 'with a valid expression', ->
-      it 'should call back with a result', ->
+      it 'calls back with a result', ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression 'bar, #fff, 20%', 0, searchCallback
 
@@ -83,7 +83,7 @@ describe 'Color', ->
           expect(result).toBeDefined()
 
     describe 'with no matches in the string', ->
-      it 'should call back with null', ->
+      it 'calls back with null', ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression 'bar', 0, searchCallback
 
@@ -95,7 +95,7 @@ describe 'Color', ->
           expect(result).toBeUndefined()
 
     describe 'the returned promise', ->
-      it 'should yield the result', ->
+      it 'yields the result', ->
         promise = Color.searchExpression 'bar, foo(#fff, 20%)', 0
 
         waitsFor -> not promise.isPending()
@@ -106,7 +106,7 @@ describe 'Color', ->
 
   describe 'searchColor', ->
     describe 'with a color in an operation', ->
-      it 'should yield the operation and not the color', ->
+      it 'yields the operation and not the color', ->
         promise = Color.searchColor 'bar, foo(#fff, 20%)', 0
 
         waitsFor -> not promise.isPending()
@@ -117,7 +117,7 @@ describe 'Color', ->
             expect(value.match).toBe('foo(#fff, 20%)')
 
     describe 'with only a color', ->
-      it 'should yield the the color', ->
+      it 'yields the the color', ->
         promise = Color.searchColor 'bar, #fff, 20%', 0
 
         waitsFor -> not promise.isPending()
@@ -128,7 +128,7 @@ describe 'Color', ->
             expect(value.match).toBe('#fff')
 
     describe 'with a color before an operation', ->
-      it 'should return the color', ->
+      it 'returns the color', ->
         promise = Color.searchColor 'bar, rgba(0,0,0,1), foo(red, 20%)', 3
 
         waitsFor -> not promise.isPending()
@@ -142,7 +142,7 @@ describe 'Color', ->
   describe '.searchExpressionSync', ->
     describe 'with a valid operation in the string', ->
       describe 'the results', ->
-        it 'should exist', ->
+        it 'exists', ->
           result = Color.searchExpressionSync 'bar, foo(#fff, 20%)'
           expect(result).toBeDefined()
 
@@ -155,7 +155,7 @@ describe 'Color', ->
     xdescribe 'with nested operations', ->
 
       describe 'the results', ->
-        it 'should exist', ->
+        it 'exists', ->
           result = Color.searchExpressionSync 'foo, foo(foo(#fff, 20%), 50%)'
           expect(result).toBeDefined()
 
@@ -170,13 +170,13 @@ describe 'Color', ->
 
     describe 'with something that is not an expression', ->
       describe 'the results', ->
-        it 'should be undefined', ->
+        it 'is undefined', ->
           result = Color.searchExpressionSync 'foo'
           expect(result).toBeUndefined()
 
     xdescribe 'with an incomplete expression before a complete one', ->
       describe 'the results', ->
-        it 'should exist', ->
+        it 'exists', ->
           result = Color.searchExpressionSync 'foo(, bar, foo(#fff, 20%)'
           expect(result).toBeDefined()
 
@@ -194,7 +194,7 @@ describe 'Color', ->
       beforeEach ->
         @color = new Color('foo(#fff, 20%)')
 
-      it 'should have called the handler', ->
+      it 'calls the handler', ->
         expect(baseColor).toBeDefined()
         expect(baseColor).toEqual('foo(#fff, 20%)')
 
@@ -202,5 +202,5 @@ describe 'Color', ->
       beforeEach ->
         @color = new Color('foo(10)')
 
-      it 'should not call the handler', ->
+      it 'does not call the handler', ->
         expect(baseColor).toBeUndefined()

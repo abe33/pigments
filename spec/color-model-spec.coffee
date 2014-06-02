@@ -4,7 +4,7 @@ require '../lib/color-expressions'
 require '../lib/color-operations'
 
 itShouldParseTheColor = (expr, red=0, green=0, blue=0, alpha=1) ->
-  msg = "should create a color with red=#{red}, green=#{green}, blue=#{blue} and alpha=#{alpha}"
+  msg = "creates a color with red=#{red}, green=#{green}, blue=#{blue} and alpha=#{alpha}"
   desc = expr.replace(/#/g, '')
 
   describe "created with #{desc}", ->
