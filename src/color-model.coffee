@@ -24,8 +24,8 @@ class Color
   @colorRegExp: ->
     ("(#{expr.regexp})" for k,expr of @colorExpressions).join('|')
 
-  @canHandle: (colorExpression) ->
-    return true if expr.canHandle(colorExpression) for k,expr of @colorExpressions
+  @canHandle: (expr) ->
+    return true for k,e of @colorExpressions when e.canHandle(expr)
     false
 
   @mixColors: (color1, color2, amount=0.5) ->
