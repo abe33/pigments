@@ -17,12 +17,12 @@ describe 'Color', ->
 
       color3 = transparentize(red, 0.5)
 
-      color4 = #000
+      color4 = transparentize(color1, 50%)
     """
 
   describe '.scanBufferForColorsInRange', ->
     describe 'for a restricted range', ->
-      it 'calls the callback only once', ->
+      it 'calls the callback only once', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColorsInRange(@buffer, [[2,0],[4,0]], searchCallback)
 
@@ -46,8 +46,10 @@ describe 'Color', ->
             expect(results[0].bufferRange.end.row).toEqual(2)
             expect(results[0].bufferRange.end.column).toEqual(22)
 
+            done()
+
     describe 'for a wider range', ->
-      it 'calls the callback thrice', ->
+      it 'calls the callback thrice', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColorsInRange(@buffer, [[2,0],[Infinity, Infinity]], searchCallback)
 
@@ -59,11 +61,12 @@ describe 'Color', ->
             expect(res).toEqual([
               'rgba(0,0,0,1)'
               'transparentize(red, 0.5)'
-              '#000'
+              'transparentize(color1, 50%)'
             ])
+            done()
 
     describe 'for a full range', ->
-      it 'calls the callback four times', ->
+      it 'calls the callback four times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColorsInRange(@buffer, [[0,0],[Infinity, Infinity]], searchCallback)
 
@@ -76,11 +79,27 @@ describe 'Color', ->
               '#fff'
               'rgba(0,0,0,1)'
               'transparentize(red, 0.5)'
-              '#000'
+              'transparentize(color1, 50%)'
             ])
+            done()
+
+      it 'creates a color with the declarationin the range', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColorsInRange(@buffer, [[0,0],[Infinity, Infinity]], searchCallback)
+
+        waitsFor -> not promise.isPending()
+        runs ->
+          promise.then (results) ->
+            color = results[3].color
+
+            expect(color.red).toEqual(255)
+            expect(color.green).toEqual(255)
+            expect(color.blue).toEqual(255)
+            expect(color.alpha).toEqual(0.5)
+            done()
 
   describe '.scanBufferForColors', ->
-    it 'calls the callback four times', ->
+    it 'calls the callback four times', (done) ->
       searchCallback = jasmine.createSpy('searchCallback')
       promise = Color.scanBufferForColors(@buffer, searchCallback)
 
@@ -93,8 +112,9 @@ describe 'Color', ->
             '#fff'
             'rgba(0,0,0,1)'
             'transparentize(red, 0.5)'
-            '#000'
+            'transparentize(color1, 50%)'
           ])
+          done()
 
     describe 'with a big buffer', ->
       beforeEach ->

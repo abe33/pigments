@@ -63,28 +63,44 @@ class ColorParsing extends Mixin
     end = buffer.characterIndexForPosition(range.end)
     bufferText = buffer.getText()
 
-    results = []
-    iterator = (result) =>
-      if result?
-        [matchStart, matchEnd] = result.range
+    variablesPromise = @scanBufferForColorVariablesInRange(buffer, range)
+    Color = this
+    variablesPromise
+    .then (variablesMap) =>
+      variables = (k for k of variablesMap)
 
-        if matchEnd <= end
-          result.color = new this(result.match)
-          result.bufferRange = new Range(
-            buffer.positionForCharacterIndex(result.range[0]),
-            buffer.positionForCharacterIndex(result.range[1]),
-          )
-          results.push result
-          callback(result)
-          start = matchEnd
-          @searchColor bufferText, start, iterator
+      if variables.length isnt 0
+        paletteRegexp = '\\b(' + variables.join('|') + ')(?!-|\\s*[\\.:=])\\b'
+
+        Color.addExpression 'variables', paletteRegexp, (color, expr) =>
+          color.rgba = new Color(variablesMap[expr]).rgba
+
+      results = []
+      iterator = (result) =>
+        if result?
+          [matchStart, matchEnd] = result.range
+
+          if matchEnd <= end
+            result.color = new Color(result.match)
+            result.bufferRange = new Range(
+              buffer.positionForCharacterIndex(result.range[0]),
+              buffer.positionForCharacterIndex(result.range[1]),
+            )
+            results.push result
+            callback(result)
+            start = matchEnd
+            @searchColor bufferText, start, iterator
+          else
+            defer.resolve if results.length > 0 then results else undefined
+            Color.removeExpression('variables')
         else
           defer.resolve if results.length > 0 then results else undefined
+          Color.removeExpression('variables')
 
-      else
-        defer.resolve if results.length > 0 then results else undefined
+      @searchColor bufferText, start, iterator
 
-    @searchColor bufferText, start, iterator
+    .fail (reason) ->
+      defer.reject(reason)
 
     defer.promise
 
