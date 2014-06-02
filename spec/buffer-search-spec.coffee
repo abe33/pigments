@@ -94,15 +94,15 @@ describe 'Color', ->
               '#000'
             ])
 
-  describe 'with a big buffer', ->
-    beforeEach ->
-      @buffer = new TextBuffer text: fs.readFileSync(path.resolve __dirname, './fixtures/real_world_example.coffee').toString()
+    describe 'with a big buffer', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: fs.readFileSync(path.resolve __dirname, './fixtures/real_world_example.coffee').toString()
 
-    it 'should have been called four times', ->
-      searchCallback = jasmine.createSpy('searchCallback')
-      promise = Color.scanBufferForColors(@buffer, searchCallback)
+      it 'should have been called four times', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
 
-      waitsFor -> not promise.isPending()
+        waitsFor -> not promise.isPending()
 
-      runs ->
-        expect(true).toEqual(true)
+        runs ->
+          expect(true).toEqual(true)
