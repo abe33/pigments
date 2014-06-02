@@ -36,6 +36,11 @@ describe 'Color', ->
             ])
 
             expect(results[0].bufferRange).toBeDefined()
+            expect(results[0].color).toBeDefined()
+            expect(results[0].color.red).toEqual(0)
+            expect(results[0].color.green).toEqual(0)
+            expect(results[0].color.blue).toEqual(0)
+            expect(results[0].color.alpha).toEqual(1)
             expect(results[0].bufferRange.start.row).toEqual(2)
             expect(results[0].bufferRange.start.column).toEqual(9)
             expect(results[0].bufferRange.end.row).toEqual(2)

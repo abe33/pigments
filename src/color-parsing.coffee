@@ -69,6 +69,7 @@ class ColorParsing extends Mixin
         [matchStart, matchEnd] = result.range
 
         if matchEnd <= end
+          result.color = new this(result.match)
           result.bufferRange = new Range(
             buffer.positionForCharacterIndex(result.range[0]),
             buffer.positionForCharacterIndex(result.range[1]),
