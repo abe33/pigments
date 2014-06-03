@@ -18,11 +18,14 @@ class Color
   ColorVariablesParsing.includeInto(this)
   NamedColors.extend(this)
 
+  @sortedColorExpressions: ->
+    (e for k,e of @colorExpressions).sort((a,b) -> b.priority - a.priority)
+
   # Public: Returns a {RegExp} that contains all the registered expressions
   # separated with `|`. This is this regexp that will be used to scan buffers
   # and find color expressions.
   @colorRegExp: ->
-    ("(#{expr.regexp})" for k,expr of @colorExpressions).join('|')
+    @sortedColorExpressions().map((e) -> "(#{e.regexp})").join('|')
 
   @canHandle: (expr) ->
     return true for k,e of @colorExpressions when e.canHandle(expr)

@@ -23,8 +23,9 @@ class ColorParsing extends Mixin
   #          color parsing phase
   # handle - A {Function} that takes a {Color} to modify and the {String}
   #          that matched during the lookup phase
-  @addExpression: (name, regexp, handle=->) ->
-    @colorExpressions[name] = new ColorExpression(name, regexp, handle)
+  @addExpression: (name, regexp, priority=0, handle=->) ->
+    [priority, handle] = [0, priority] if typeof priority is 'function'
+    @colorExpressions[name] = new ColorExpression(name, regexp, handle, priority)
 
   # Public: Removes an expression using the passed-in `name`.
   #
@@ -212,7 +213,7 @@ class ColorParsing extends Mixin
   #
   # colorExpression - A {String} to parse
   parseExpression: (colorExpression) ->
-    for name, expr of @constructor.colorExpressions
+    for expr in @constructor.sortedColorExpressions()
       if expr.canHandle(colorExpression)
         expr.handle(this, colorExpression)
         return

@@ -12,7 +12,9 @@ class ColorExpression
   # regexp - The oniguruma regexp {String} that match the expression
   # handle - A {Function} that will be called to modify a {Color} accordingly
   #          to a {String} previsouly matched by this expression.
-  constructor: (@name, @regexp, @handle) ->
+  # priority - A {Number} to priorize an expression over others. The greater
+  #            the value, the sooner it will be evaluated.
+  constructor: (@name, @regexp, @handle, @priority=0) ->
     @onigRegExp = new OnigRegExp("^#{@regexp}$")
 
   # Public: Returns `true` if the current {ColorExpression} can handle
