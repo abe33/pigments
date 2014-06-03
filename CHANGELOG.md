@@ -1,3 +1,17 @@
+<a name="v1.5.0"></a>
+# v1.5.0 (2014-06-03)
+
+## :sparkles: Features
+
+- Implement variables parsing before searching for colors ([83ab2fcc](https://github.com/abe33/pigments/commit/83ab2fcc0508a845d9e46e894e1332edcce02bb8))
+- Add a `color` property in buffer scan results ([ed588a7f](https://github.com/abe33/pigments/commit/ed588a7f2d01a3826ee1e4b7131f79306d13588b))  <br>The `color` property stores a `Color` object corresponding
+  to the found color.
+- Implement variables search for less, sass, scss and stylus syntax ([9bf60ac2](https://github.com/abe33/pigments/commit/9bf60ac2a5b377c946b3be6b18a9bed99d813c99)), [c484de2a](https://github.com/abe33/pigments/commit/c484de2aed4262c6b13328a39978693fc1b98c12))
+
+## :bug: Bug Fixes
+
+- Fix false positive match in `canHandle` ([5b8a260b](https://github.com/abe33/pigments/commit/5b8a260bc90b4572dd7df1eb173e2bbec123a0e8))
+
 <a name="v1.4.1"></a>
 # v1.4.1 (2014-05-29)
 
