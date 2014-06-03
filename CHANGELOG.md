@@ -1,3 +1,17 @@
+<a name="v1.6.0"></a>
+# v1.6.0 (2014-06-03)
+
+## :sparkles: Features
+
+- Implement color expressions priority ([b807897f](https://github.com/abe33/pigments/commit/b807897fb1eab616efd42dafea8404a3c209814c))  <br>Allowing some expression regexp to be evaluated prior any
+  other.
+
+## :bug: Bug Fixes
+
+- Fix unmatched colors from variables ([f0dabc0a](https://github.com/abe33/pigments/commit/f0dabc0ab390555f5e0de519193da29d86415945))
+- Fix invalid empty match making extraction fail ([f73ed8b0](https://github.com/abe33/pigments/commit/f73ed8b0c2134596694da68c256f5b727940f8e5))
+- Fix missing variables expressions require in index ([b4c35ed7](https://github.com/abe33/pigments/commit/b4c35ed7890e0ef5f5af96610337e9fc2f9c324a))
+
 <a name="v1.5.0"></a>
 # v1.5.0 (2014-06-03)
 
