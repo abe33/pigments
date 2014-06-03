@@ -36,7 +36,7 @@ class ColorVariablesParsing extends Mixin
       re.search str, start, (err, match) =>
         defer.reject(err) if err?
 
-        if match?
+        if match? and match[0].match isnt ''
           [key, value] = @extractVariableElements(match[0].match)
 
           if @canHandle(value)
