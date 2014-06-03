@@ -1,4 +1,5 @@
 Mixin = require 'mixto'
+_ = require 'underscore-plus'
 Q = require 'q'
 {OnigRegExp} = require 'oniguruma'
 
@@ -68,12 +69,12 @@ class ColorParsing extends Mixin
     Color = this
     variablesPromise
     .then (variablesMap) =>
-      variables = (k for k of variablesMap)
+      variables = (k for k of variablesMap).map (s) -> _.escapeRegExp(s)
 
-      if variables.length isnt 0
-        paletteRegexp = '\\b(' + variables.join('|') + ')(?!-|\\s*[\\.:=])\\b'
+      if variables.length > 0
+        paletteRegexp = '(' + variables.join('|') + ')\\b(?!-|\\s*[\\.:=])'
 
-        Color.addExpression 'variables', paletteRegexp, (color, expr) =>
+        Color.addExpression 'variables', paletteRegexp, 1, (color, expr) =>
           color.rgba = new Color(variablesMap[expr]).rgba
 
       results = []
@@ -83,6 +84,7 @@ class ColorParsing extends Mixin
 
           if matchEnd <= end
             result.color = new Color(result.match)
+
             result.bufferRange = new Range(
               buffer.positionForCharacterIndex(result.range[0]),
               buffer.positionForCharacterIndex(result.range[1]),
