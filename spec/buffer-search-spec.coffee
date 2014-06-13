@@ -132,13 +132,16 @@ describe 'Color', ->
   describe '.scanBufferForColorVariables', ->
     describe 'with a buffer containing less variables', ->
       beforeEach ->
-        @buffer = new TextBuffer text: """
-        @red: #f00;
+        @buffer = new TextBuffer {
+          text: """
+          @red: #f00;
 
-        @light_red: lighten(@red, 10%);
+          @light_red: lighten(@red, 10%);
 
-        @not_a_color: 10px;
-        """
+          @not_a_color: 10px;
+          """
+          filePath: 'some_path.less'
+        }
 
       it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
@@ -157,14 +160,16 @@ describe 'Color', ->
 
     describe 'with a buffer containing sass variables', ->
       beforeEach ->
-        @buffer = new TextBuffer text: """
-        $red: #f00
+        @buffer = new TextBuffer {
+          text: """
+          $red: #f00
 
-        $light_red: lighten($red, 10%)
+          $light_red: lighten($red, 10%)
 
-        $not_a_color: 10px
-        """
-
+          $not_a_color: 10px
+          """
+          filePath: 'some_path.sass'
+        }
       it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
@@ -182,14 +187,16 @@ describe 'Color', ->
 
     describe 'with a buffer containing scss variables', ->
       beforeEach ->
-        @buffer = new TextBuffer text: """
-        $red: #f00;
+        @buffer = new TextBuffer {
+          text: """
+          $red: #f00;
 
-        $light_red: lighten($red, 10%);
+          $light_red: lighten($red, 10%);
 
-        $not_a_color: 10px;
-        """
-
+          $not_a_color: 10px;
+          """
+          filePath: 'some_path.scss'
+        }
       it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
@@ -207,14 +214,16 @@ describe 'Color', ->
 
     describe 'with a buffer containing scss variables', ->
       beforeEach ->
-        @buffer = new TextBuffer text: """
-        red = #f00
+        @buffer = new TextBuffer {
+          text: """
+          red = #f00
 
-        light_red= lighten(red, 10%);
+          light_red= lighten(red, 10%);
 
-        not_a_color = 10px
-        """
-
+          not_a_color = 10px
+          """
+          filePath: 'some_path.styl'
+        }
       it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
