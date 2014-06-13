@@ -34,9 +34,13 @@ module.exports = (grunt) ->
           'src/**/*.coffee'
           'spec/**/*.coffee'
         ]
-        tasks: [
-          'test'
-        ]
+        tasks: ['test']
+
+      config:
+        files: ['Gruntfile.coffee']
+        options:
+          reload: true
+
   grunt.loadNpmTasks('grunt-contrib-coffee')
   grunt.loadNpmTasks('grunt-shell')
   grunt.loadNpmTasks('grunt-coffeelint')
