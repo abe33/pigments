@@ -41,8 +41,8 @@ class ColorParsing extends Mixin
   #
   # Returns a {Promise} whose value will be an {Array} containing all the
   # found matches.
-  @scanBufferForColors: (buffer, callback) ->
-    @scanBufferForColorsInRange(buffer, [[0, 0], [Infinity, Infinity]], callback)
+  @scanBufferForColors: (buffer, variables=null, callback) ->
+    @scanBufferForColorsInRange(buffer, [[0, 0], [Infinity, Infinity]], variables, callback)
 
   # Public: Scans the passed-in {Buffer} for {Color}s within the given
   # {Range}.
@@ -54,8 +54,10 @@ class ColorParsing extends Mixin
   #
   # Returns a {Promise} whose value will be an {Array} containing all the
   # found matches.
-  @scanBufferForColorsInRange: (buffer, range=[[0, 0], [Infinity, Infinity]], callback=->) ->
+  @scanBufferForColorsInRange: (buffer, range=[[0, 0], [Infinity, Infinity]],  variables=null, callback=->) ->
     throw new Error 'Missing buffer' unless buffer?
+    [callback, variables] = [variables] if typeof variables is 'function'
+
     Range = buffer.constructor.Range
 
     defer = Q.defer()
