@@ -83,7 +83,7 @@ describe 'Color', ->
             ])
             done()
 
-      it 'creates a color with the declarationin the range', (done) ->
+      it 'creates a color with the declaration in the range', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColorsInRange(@buffer, [[0,0],[Infinity, Infinity]], searchCallback)
 
