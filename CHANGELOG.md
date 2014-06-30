@@ -1,3 +1,11 @@
+<a name="v1.6.2"></a>
+# v1.6.2 (2014-07-01)
+
+## :bug: Bug Fixes
+
+- The variables arguments in color scan was never used ([4220eae4](https://github.com/abe33/pigments/commit/4220eae466ae58475d0ca4561c48acce1aad81ef))
+
+
 <a name="v1.6.0"></a>
 # v1.6.0 (2014-06-03)
 
