@@ -129,6 +129,24 @@ describe 'Color', ->
         runs ->
           expect(true).toEqual(true)
 
+    describe 'with a variables hash', ->
+      it 'creates the colors using the passed-in variables', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        variables =
+          color1: 'red'
+        promise = Color.scanBufferForColors(@buffer, variables, searchCallback)
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (results) ->
+            last = results[results.length - 1]
+
+            expect(last.color.red).toEqual(255)
+            expect(last.color.green).toEqual(0)
+            expect(last.color.blue).toEqual(0)
+            expect(last.color.alpha).toEqual(0.5)
+
   describe '.scanBufferForColorVariables', ->
     describe 'with a buffer containing less variables', ->
       beforeEach ->

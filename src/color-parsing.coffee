@@ -67,7 +67,11 @@ class ColorParsing extends Mixin
     end = buffer.characterIndexForPosition(range.end)
     bufferText = buffer.getText()
 
-    variablesPromise = @scanBufferForColorVariablesInRange(buffer, range)
+    variablesPromise = if variables?
+      Q.fcall -> variables
+    else
+      @scanBufferForColorVariablesInRange(buffer, range)
+      
     Color = this
     variablesPromise
     .then (variablesMap) =>
