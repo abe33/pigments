@@ -37,10 +37,15 @@ class ColorVariablesParsing extends Mixin
         defer.reject(err) if err?
 
         if match? and match[0].match isnt ''
-          [key, value] = @extractVariableElements(match[0].match)
-
+          [key, value] = @extractVariableElements(match[0].match, buffer)
+          start = buffer.positionForCharacterIndex(match[0].start)
+          end = buffer.positionForCharacterIndex(match[0].end)
+          range = [
+            [start.row, start.column]
+            [end.row, end.column]
+          ]
           if @canHandle(value)
-            results[key] = value
+            results[key] = {value, range}
             cb?(match)
 
           searchOccurences(str, cb, match[0].end)

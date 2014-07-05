@@ -71,7 +71,7 @@ class ColorParsing extends Mixin
       Q.fcall -> variables
     else
       @scanBufferForColorVariablesInRange(buffer, range)
-      
+
     Color = this
     variablesPromise
     .then (variablesMap) =>
@@ -81,7 +81,7 @@ class ColorParsing extends Mixin
         paletteRegexp = '(' + variables.join('|') + ')\\b(?!-|\\s*[\\.:=])'
 
         Color.addExpression 'variables', paletteRegexp, 1, (color, expr) =>
-          color.rgba = new Color(variablesMap[expr]).rgba
+          color.rgba = new Color(variablesMap[expr].value).rgba
 
       results = []
       iterator = (result) =>

@@ -133,7 +133,9 @@ describe 'Color', ->
       it 'creates the colors using the passed-in variables', ->
         searchCallback = jasmine.createSpy('searchCallback')
         variables =
-          color1: 'red'
+          color1:
+            value: 'red'
+            
         promise = Color.scanBufferForColors(@buffer, variables, searchCallback)
 
         waitsFor -> not promise.isPending()
@@ -171,8 +173,12 @@ describe 'Color', ->
           expect(searchCallback.callCount).toEqual(2)
           promise.then (results) ->
             expect(results).toEqual({
-              '@red': '#f00'
-              '@light_red': 'lighten(@red, 10%)'
+              '@red':
+                value: '#f00'
+                range: [[0,0], [0,11]]
+              '@light_red':
+                value: 'lighten(@red, 10%)'
+                range: [[2,0], [2,31]]
             })
             done()
 
@@ -198,8 +204,12 @@ describe 'Color', ->
           expect(searchCallback.callCount).toEqual(2)
           promise.then (results) ->
             expect(results).toEqual({
-              '$red': '#f00'
-              '$light_red': 'lighten($red, 10%)'
+              '$red':
+                value: '#f00'
+                range: [[0,0], [0,10]]
+              '$light_red':
+                value: 'lighten($red, 10%)'
+                range: [[2,0], [2,30]]
             })
             done()
 
@@ -225,8 +235,12 @@ describe 'Color', ->
           expect(searchCallback.callCount).toEqual(2)
           promise.then (results) ->
             expect(results).toEqual({
-              '$red': '#f00'
-              '$light_red': 'lighten($red, 10%)'
+              '$red':
+                value: '#f00'
+                range: [[0,0], [0,11]]
+              '$light_red':
+                value: 'lighten($red, 10%)'
+                range: [[2,0], [2,31]]
             })
             done()
 
@@ -252,7 +266,11 @@ describe 'Color', ->
           expect(searchCallback.callCount).toEqual(2)
           promise.then (results) ->
             expect(results).toEqual({
-              'red': '#f00'
-              'light_red': 'lighten(red, 10%)'
+              'red':
+                value: '#f00'
+                range: [[0,0], [0,10]]
+              'light_red':
+                value: 'lighten(red, 10%)'
+                range: [[2,0], [2,29]]
             })
             done()
