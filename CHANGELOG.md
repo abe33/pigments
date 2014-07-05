@@ -1,3 +1,24 @@
+<a name="v1.7.0"></a>
+# v1.7.0 (2014-07-05)
+
+## :sparkles: Features
+
+- Add buffer range as property of found variables ([1a85a19b](https://github.com/abe33/pigments/commit/1a85a19bd0492a8ec58d4528bd9efe69a31e7f5d))
+
+## Breaking Changes
+
+- due to [1a85a19b](https://github.com/abe33/pigments/commit/1a85a19bd0492a8ec58d4528bd9efe69a31e7f5d), the variables resulting hash format had changed, the
+value for a variable is now an object with a `value` and `range`
+properties.
+To update to the new version replace the following code:
+```coffeescript
+results[‘@variable’]
+```
+With:
+```coffeescript
+results[‘@variable’].value
+```
+
 <a name="v1.6.2"></a>
 # v1.6.2 (2014-07-01)
 
@@ -11,8 +32,7 @@
 
 ## :sparkles: Features
 
-- Implement color expressions priority ([b807897f](https://github.com/abe33/pigments/commit/b807897fb1eab616efd42dafea8404a3c209814c))  <br>Allowing some expression regexp to be evaluated prior any
-  other.
+- Implement color expressions priority ([b807897f](https://github.com/abe33/pigments/commit/b807897fb1eab616efd42dafea8404a3c209814c))  <br>Allowing some expression regexp to be evaluated prior any other.
 
 ## :bug: Bug Fixes
 
