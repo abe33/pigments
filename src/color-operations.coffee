@@ -1,4 +1,5 @@
 Color = require './color-model'
+cssColor = require 'css-color-function'
 
 {
   int
@@ -196,3 +197,8 @@ Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression
 
     color.rgb = [255 - r, 255 - g, 255 - b]
     color.alpha = baseColor.alpha
+
+# color(green tint(50%))
+Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color, expression) ->
+  rgba = cssColor.convert(expression)
+  color.rgba = new Color(rgba).rgba
