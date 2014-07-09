@@ -1,3 +1,10 @@
+<a name="v1.7.1"></a>
+# v1.7.1 (2014-07-10)
+
+## :bug: Bug Fixes
+
+- Fix invalid positions in variables parsing within range ([1bf366f1](https://github.com/abe33/pigments/commit/1bf366f185546b78cd5ad0236a00eef6a9361483))
+
 <a name="v1.7.0"></a>
 # v1.7.0 (2014-07-05)
 
