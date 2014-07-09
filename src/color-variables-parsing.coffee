@@ -19,15 +19,15 @@ class ColorVariablesParsing extends Mixin
     @scanBufferForColorVariablesInRange(buffer, [[0, 0], [Infinity, Infinity]], callback)
 
   @scanBufferForColorVariablesInRange: (buffer, range, callback) ->
-    hrow new Error 'Missing buffer' unless buffer?
+    throw new Error 'Missing buffer' unless buffer?
     Range = buffer.constructor.Range
 
     defer = Q.defer()
     range = Range.fromObject(range)
 
-    start = buffer.characterIndexForPosition(range.start)
-    end = buffer.characterIndexForPosition(range.end)
-    bufferText = buffer.getText()[start..end]
+    bufferStart = buffer.characterIndexForPosition(range.start)
+    bufferEnd = buffer.characterIndexForPosition(range.end)
+    bufferText = buffer.getText()[bufferStart..bufferEnd]
     re = @getVariableExpressionsRegexp()
 
     results = {}
@@ -38,8 +38,8 @@ class ColorVariablesParsing extends Mixin
 
         if match? and match[0].match isnt ''
           [key, value] = @extractVariableElements(match[0].match, buffer)
-          start = buffer.positionForCharacterIndex(match[0].start)
-          end = buffer.positionForCharacterIndex(match[0].end)
+          start = buffer.positionForCharacterIndex(bufferStart + match[0].start)
+          end = buffer.positionForCharacterIndex(bufferStart + match[0].end)
           range = [
             [start.row, start.column]
             [end.row, end.column]
