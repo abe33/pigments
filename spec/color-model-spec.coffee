@@ -16,6 +16,11 @@ itShouldParseTheColor = (expr, red=0, green=0, blue=0, alpha=1) ->
       expect(Math.round(color.blue)).toEqual(blue)
       expect(color.alpha).toBeCloseTo(alpha, 0.001)
 
+itShouldntParseTheColor = (expr) ->
+  describe "parsing the expression '#{expr}'", ->
+    it 'cannot handle the expression', ->
+      expect(Color.canHandle(expr)).toBeFalsy()
+
 describe 'Color', ->
 
   itShouldParseTheColor('#ff7f00', 255, 127, 0)
@@ -28,13 +33,19 @@ describe 'Color', ->
   itShouldParseTheColor('rgba(255,127,0,0.5)', 255, 127, 0, 0.5)
   itShouldParseTheColor('rgba(255,127,0,.5)', 255, 127, 0, 0.5)
 
+  itShouldntParseTheColor('rgba(255,127,0,)')
+
   itShouldParseTheColor('hsl(200,50%,50%)', 64, 149, 191)
   itShouldParseTheColor('hsla(200,50%,50%,0.5)', 64, 149, 191, 0.5)
   itShouldParseTheColor('hsla(200,50%,50%,.5)', 64, 149, 191, 0.5)
 
+  itShouldntParseTheColor('hsla(200,50%,50%,)')
+
   itShouldParseTheColor('hsv(200,50%,50%)', 64, 106, 128)
   itShouldParseTheColor('hsva(200,50%,50%,0.5)', 64, 106, 128, 0.5)
   itShouldParseTheColor('hsva(200,50%,50%,.5)', 64, 106, 128, 0.5)
+
+  itShouldntParseTheColor('hsva(200,50%,50%,)')
 
   itShouldParseTheColor('cyan', 0, 255, 255)
 
