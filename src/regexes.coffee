@@ -1,5 +1,5 @@
 int = '\\d+'
-float = "#{int}(?:\\.#{int})?"
+float = "\\d*(?:\\.#{int})?"
 percent = "#{float}%"
 
 module.exports =
