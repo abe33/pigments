@@ -1,3 +1,15 @@
+<a name="v1.8.0"></a>
+# v1.8.0 (2014-07-10)
+
+## :sparkles: Features
+
+- Add support for css color function ([97c43d37](https://github.com/abe33/pigments/commit/97c43d376b68810c74b41e047405dcbb23918357))
+
+## :bug: Bug Fixes
+
+- Fix parsing of variable with a dash in their name ([6d942263](https://github.com/abe33/pigments/commit/6d9422637b8b11bd42945276c82ddf5edc9bf720), [abe33/atom-color-highlight#15](https://github.com/abe33/atom-color-highlight/issues/15))
+- Fix invalid parsing of floats with no content ([6f44b765](https://github.com/abe33/pigments/commit/6f44b7652192d77b0845b367e137b9350238e073))
+
 <a name="v1.7.1"></a>
 # v1.7.1 (2014-07-10)
 
