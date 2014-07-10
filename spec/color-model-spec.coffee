@@ -25,32 +25,40 @@ describe 'Color', ->
   itShouldParseTheColor('0x00ff7f00', 255, 127, 0, 0)
 
   itShouldParseTheColor('rgb(255,127,0)', 255, 127, 0)
-  itShouldParseTheColor('rgba(255,127,0,0)', 255, 127, 0, 0)
+  itShouldParseTheColor('rgba(255,127,0,0.5)', 255, 127, 0, 0.5)
+  itShouldParseTheColor('rgba(255,127,0,.5)', 255, 127, 0, 0.5)
 
   itShouldParseTheColor('hsl(200,50%,50%)', 64, 149, 191)
-  itShouldParseTheColor('hsla(200,50%,50%,0)', 64, 149, 191, 0)
+  itShouldParseTheColor('hsla(200,50%,50%,0.5)', 64, 149, 191, 0.5)
+  itShouldParseTheColor('hsla(200,50%,50%,.5)', 64, 149, 191, 0.5)
 
   itShouldParseTheColor('hsv(200,50%,50%)', 64, 106, 128)
-  itShouldParseTheColor('hsva(200,50%,50%,0)', 64, 106, 128, 0)
+  itShouldParseTheColor('hsva(200,50%,50%,0.5)', 64, 106, 128, 0.5)
+  itShouldParseTheColor('hsva(200,50%,50%,.5)', 64, 106, 128, 0.5)
 
   itShouldParseTheColor('cyan', 0, 255, 255)
 
   itShouldParseTheColor('darken(cyan, 20%)', 0, 204, 204)
   itShouldParseTheColor('lighten(cyan, 20%)', 51, 255, 255)
 
-  itShouldParseTheColor('transparentize(cyan, 0.5)', 0, 255, 255, 0.5)
   itShouldParseTheColor('transparentize(cyan, 50%)', 0, 255, 255, 0.5)
+  itShouldParseTheColor('transparentize(cyan, 0.5)', 0, 255, 255, 0.5)
+  itShouldParseTheColor('transparentize(cyan, .5)', 0, 255, 255, 0.5)
   itShouldParseTheColor('fadein(cyan, 0.5)', 0, 255, 255, 0.5)
+  itShouldParseTheColor('fadein(cyan, .5)', 0, 255, 255, 0.5)
 
-  itShouldParseTheColor('opacify(0x7800FFFF, 0.5)', 0, 255, 255, 1)
   itShouldParseTheColor('opacify(0x7800FFFF, 50%)', 0, 255, 255, 1)
+  itShouldParseTheColor('opacify(0x7800FFFF, 0.5)', 0, 255, 255, 1)
+  itShouldParseTheColor('opacify(0x7800FFFF, .5)', 0, 255, 255, 1)
   itShouldParseTheColor('fadeout(0x7800FFFF, 0.5)', 0, 255, 255, 1)
+  itShouldParseTheColor('fadeout(0x7800FFFF, .5)', 0, 255, 255, 1)
 
   itShouldParseTheColor('saturate(#855, 20%)', 158, 63, 63)
   itShouldParseTheColor('saturate(#855, 0.2)', 158, 63, 63)
 
   itShouldParseTheColor('desaturate(#9e3f3f, 20%)', 136, 85, 85)
   itShouldParseTheColor('desaturate(#9e3f3f, 0.2)', 136, 85, 85)
+  itShouldParseTheColor('desaturate(#9e3f3f, .2)', 136, 85, 85)
 
   itShouldParseTheColor('grayscale(#9e3f3f)', 111, 111, 111)
   itShouldParseTheColor('greyscale(#9e3f3f)', 111, 111, 111)
