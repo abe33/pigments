@@ -17,7 +17,7 @@ describe 'Color', ->
 
       color3 = transparentize(red, 0.5)
 
-      color4 = transparentize(color1, 50%)
+      other-color = transparentize(color1, 50%)
     """
 
   describe '.scanBufferForColorsInRange', ->
@@ -135,7 +135,7 @@ describe 'Color', ->
         variables =
           color1:
             value: 'red'
-            
+
         promise = Color.scanBufferForColors(@buffer, variables, searchCallback)
 
         waitsFor -> not promise.isPending()
@@ -154,9 +154,9 @@ describe 'Color', ->
       beforeEach ->
         @buffer = new TextBuffer {
           text: """
-          @red: #f00;
+          @red: #f00
 
-          @light_red: lighten(@red, 10%);
+          @light-red_var: lighten(@red, 10%);
 
           @not_a_color: 10px;
           """
@@ -175,10 +175,10 @@ describe 'Color', ->
             expect(results).toEqual({
               '@red':
                 value: '#f00'
-                range: [[0,0], [0,11]]
-              '@light_red':
+                range: [[0,0], [0,10]]
+              '@light-red_var':
                 value: 'lighten(@red, 10%)'
-                range: [[2,0], [2,31]]
+                range: [[2,0], [2,35]]
             })
             done()
 
@@ -188,7 +188,7 @@ describe 'Color', ->
           text: """
           $red: #f00
 
-          $light_red: lighten($red, 10%)
+          $light-red_var: lighten($red, 10%)
 
           $not_a_color: 10px
           """
@@ -207,9 +207,9 @@ describe 'Color', ->
               '$red':
                 value: '#f00'
                 range: [[0,0], [0,10]]
-              '$light_red':
+              '$light-red_var':
                 value: 'lighten($red, 10%)'
-                range: [[2,0], [2,30]]
+                range: [[2,0], [2,34]]
             })
             done()
 
@@ -219,7 +219,7 @@ describe 'Color', ->
           text: """
           $red: #f00;
 
-          $light_red: lighten($red, 10%);
+          $light-red_var: lighten($red, 10%);
 
           $not_a_color: 10px;
           """
@@ -238,19 +238,19 @@ describe 'Color', ->
               '$red':
                 value: '#f00'
                 range: [[0,0], [0,11]]
-              '$light_red':
+              '$light-red_var':
                 value: 'lighten($red, 10%)'
-                range: [[2,0], [2,31]]
+                range: [[2,0], [2,35]]
             })
             done()
 
-    describe 'with a buffer containing scss variables', ->
+    describe 'with a buffer containing stylus variables', ->
       beforeEach ->
         @buffer = new TextBuffer {
           text: """
           red = #f00
 
-          light_red= lighten(red, 10%);
+          light-red_var= lighten(red, 10%);
 
           not_a_color = 10px
           """
@@ -269,8 +269,8 @@ describe 'Color', ->
               'red':
                 value: '#f00'
                 range: [[0,0], [0,10]]
-              'light_red':
+              'light-red_var':
                 value: 'lighten(red, 10%)'
-                range: [[2,0], [2,29]]
+                range: [[2,0], [2,33]]
             })
             done()
