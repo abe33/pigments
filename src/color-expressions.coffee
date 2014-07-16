@@ -22,13 +22,13 @@ Color = require './color-model'
   parseFloatOrPercent
 } = require './utils'
 
-# #000000
+# #3489ef
 Color.addExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (color, expression) ->
   [_, hexa] = @onigRegExp.searchSync(expression)
 
   color.hex = hexa.match
 
-# #000
+# #38e
 Color.addExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (color, expression) ->
   [_, hexa] = @onigRegExp.searchSync(expression)
   colorAsInt = parseInt(hexa.match, 16)
@@ -37,19 +37,19 @@ Color.addExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (color, expressio
   color.green = (colorAsInt >> 4 & 0xf) * 17
   color.blue = (colorAsInt & 0xf) * 17
 
-# 0xFF000000
+# 0xab3489ef
 Color.addExpression 'int_hexa_8', "0x(#{hexa}{8})(?!#{hexa})", (color, expression) ->
   [_, hexa] = @onigRegExp.searchSync(expression)
 
   color.hexARGB = hexa.match
 
-# 0x000000
+# 0x3489ef
 Color.addExpression 'int_hexa_6', "0x(#{hexa}{6})(?!#{hexa})", (color, expression) ->
   [_, hexa] = @onigRegExp.searchSync(expression)
 
   color.hex = hexa.match
 
-# rgb(0,0,0)
+# rgb(50,120,200)
 Color.addExpression 'css_rgb', strip("
   rgb#{ps}\\s*
     #{intOrPercent}
@@ -66,7 +66,7 @@ Color.addExpression 'css_rgb', strip("
   color.blue = parseIntOrPercent(b.match)
   color.alpha = 1
 
-# rgba(0,0,0,1)
+# rgba(50,120,200,0.7)
 Color.addExpression 'css_rgba', strip("
   rgba#{ps}\\s*
     #{intOrPercent}
@@ -85,7 +85,7 @@ Color.addExpression 'css_rgba', strip("
   color.blue = parseIntOrPercent(b.match)
   color.alpha = parseFloat(a.match)
 
-# hsl(0,0%,0%)
+# hsl(210,50%,50%)
 Color.addExpression 'css_hsl', strip("
   hsl#{ps}\\s*
     (#{int})
@@ -104,7 +104,7 @@ Color.addExpression 'css_hsl', strip("
   ]
   color.alpha = 1
 
-# hsla(0,0%,0%,1)
+# hsla(210,50%,50%,0.7)
 Color.addExpression 'css_hsla', strip("
   hsla#{ps}\\s*
     (#{int})
@@ -125,7 +125,7 @@ Color.addExpression 'css_hsla', strip("
   ]
   color.alpha = parseFloat(a.match)
 
-# hsv(0,0%,0%)
+# hsv(210,70%,90%)
 Color.addExpression 'hsv', strip("
   hsv#{ps}\\s*
     (#{int})
@@ -144,7 +144,7 @@ Color.addExpression 'hsv', strip("
   ]
   color.alpha = 1
 
-# hsva(0,0%,0%,1)
+# hsva(210,70%,90%,0.7)
 Color.addExpression 'hsva', strip("
   hsva#{ps}\\s*
     (#{int})
@@ -166,7 +166,7 @@ Color.addExpression 'hsva', strip("
   color.alpha = parseFloat(a.match)
 
 
-# vec4(0,0,0,1)
+# vec4(0.2, 0.5, 0.9, 0.7)
 Color.addExpression 'vec4', strip("
   vec4#{ps}\\s*
     (#{float})
@@ -187,7 +187,7 @@ Color.addExpression 'vec4', strip("
     parseFloat(a.match)
   ]
 
-# black
+# dodgerblue
 colors = Object.keys(Color.namedColors)
 
 colorRegexp = "\\b(?<![\\.\\$@-])(?i)(#{colors.join('|')})(?-i)(?!\\s*[-\\.:=])\\b"
