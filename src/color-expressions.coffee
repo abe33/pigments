@@ -187,6 +187,26 @@ Color.addExpression 'vec4', strip("
     parseFloat(a.match)
   ]
 
+# hwb(210,40%,40%)
+Color.addExpression 'hwb', strip("
+  hwb#{ps}\\s*
+    (#{int})
+    #{comma}
+    (#{percent})
+    #{comma}
+    (#{percent})
+  #{pe}
+"), (color, expression) ->
+  [_,h,w,b] = @onigRegExp.searchSync(expression)
+
+  color.hwb = [
+    parseInt(h.match)
+    parseFloat(w.match)
+    parseFloat(b.match)
+  ]
+  color.alpha = 1
+
+
 # dodgerblue
 colors = Object.keys(Color.namedColors)
 

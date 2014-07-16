@@ -96,6 +96,16 @@ class Color
       [@red, @green, @blue] = @constructor.hsvToRGB.apply(@constructor, hsv)
   }
 
+  # Public: The `hwb` accessor gives access to the color in the
+  # HWB color space. This color space is reprensented as an {Array}
+  # such as `[hue, whiteness, blackness]`.
+  # Using the `hwb` setter doesn't modify the alpha component of the color.
+  @::accessor 'hwb', {
+    get: -> @constructor.rgbToHWB(@red, @green, @blue)
+    set: (hwb) ->
+      [@red, @green, @blue] = @constructor.hwbToRGB.apply(@constructor, hwb)
+  }
+
   # Public: The `hsl` accessor gives access to the color in the
   # HSL color space. This color space is reprensented as an {Array}
   # such as `[hue, saturation, luminance]`.

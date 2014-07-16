@@ -47,6 +47,8 @@ describe 'Color', ->
 
   itShouldntParseTheColor('hsva(200,50%,50%,)')
 
+  itShouldParseTheColor('hwb(210,40%,40%)', 102, 128, 153)
+
   itShouldParseTheColor('cyan', 0, 255, 255)
 
   itShouldParseTheColor('darken(cyan, 20%)', 0, 204, 204)

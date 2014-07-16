@@ -261,3 +261,55 @@ class ColorConversions extends Mixin
       hue(h) * 255
       hue(h - 1 / 3) * 255
     ]
+
+  # Public: Converts a color from the `hsv` color space to the `hwb` one.
+  #
+  # h - The {Number} for the hue component.
+  # s - The {Number} for the saturation component.
+  # v - The {Number} for the value component.
+  #
+  # Returns an {Array} containing the hue, whiteness and blackness of the color.
+  hsvToHWB: (h, s, v) ->
+    [s,v] = [s / 100, v / 100]
+
+    w = (1 - s) * v
+    b = 1 - v
+
+    [h, w * 100, b * 100]
+
+  # Public: Converts a color from the `hwb` color space to the `hsv` one.
+  #
+  # h - The {Number} for the hue component.
+  # w - The {Number} for the whiteness component.
+  # b - The {Number} for the blackness component.
+  #
+  # Returns an {Array} with the hue, saturation and value of the color.
+  hwbToHSV: (h, w, b) ->
+    [w,b] = [w / 100, b / 100]
+
+    s = 1 - (w / (1 - b))
+    v = 1 - b
+
+    [h, s * 100, v * 100]
+
+  # Public: Converts a color in the `rgb` color space in an
+  # {Array} with the color in the `hwb` color space.
+  #
+  # r - An integer in the range [O-255] for the red component
+  # g - An integer in the range [O-255] for the green component
+  # b - An integer in the range [O-255] for the blue component
+  #
+  # Returns an {Array} containing the hue, whiteness and blackness
+  # of the color.
+  rgbToHWB: (r,g,b) -> @hsvToHWB(@rgbToHSV(r,g,b)...)
+
+  # Public: Converts a color defined in the `hwb` color space into
+  # an {Array} containing the color in the `rgb` color space.
+  #
+  # h - An integer {Number} in the range [O-360] for the hue component.
+  # w - A float {Number} in the range [O-100] for the whiteness component.
+  # b - A float {Number} in the range [O-100] for the blackness component.
+  #
+  # Returns an {Array} containing the red, green and blue components.
+  # of the color
+  hwbToRGB: (h,w,b) -> @hsvToRGB(@hwbToHSV(h,w,b)...)
