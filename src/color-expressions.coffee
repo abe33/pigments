@@ -195,16 +195,17 @@ Color.addExpression 'hwb', strip("
     (#{percent})
     #{comma}
     (#{percent})
+    (#{comma}(#{float}))?
   #{pe}
 "), (color, expression) ->
-  [_,h,w,b] = @onigRegExp.searchSync(expression)
+  [_,h,w,b,_,a] = @onigRegExp.searchSync(expression)
 
   color.hwb = [
     parseInt(h.match)
     parseFloat(w.match)
     parseFloat(b.match)
   ]
-  color.alpha = 1
+  color.alpha = if a.match.length then parseFloat(a.match) else 1
 
 
 # dodgerblue
