@@ -1,3 +1,18 @@
+<a name="v1.9.0"></a>
+# v1.9.0 (2014-07-16)
+
+## :sparkles: Features
+
+- Add support for the css4 `gray` functional notation ([f8f0d212](https://github.com/abe33/pigments/commit/f8f0d21223c24b4724c8e0638b4f3b52126160b1))
+- Add support for the HWB color model ([b64d9574](https://github.com/abe33/pigments/commit/b64d95749a348cb66e9434c5438eac6afbca0693), [abe33/atom-color-highlight#20](https://github.com/abe33/atom-color-highlight/issues/20))  
+  <br>Includes:
+  - Conversion from and to rgb and hsv models
+  - A `hwb` accessor on colors
+
+## :bug: Bug Fixes
+
+- Fix number followed by = matched as stylus variable ([5e748b2f](https://github.com/abe33/pigments/commit/5e748b2f90c09a7003bf7794aa6e1fbe7067d8b7))
+
 <a name="v1.8.0"></a>
 # v1.8.0 (2014-07-10)
 
