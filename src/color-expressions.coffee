@@ -207,6 +207,17 @@ Color.addExpression 'hwb', strip("
   ]
   color.alpha = if a.match.length then parseFloat(a.match) else 1
 
+# gray(50%)
+Color.addExpression 'gray', strip("
+  gray#{ps}\\s*
+    (#{percent})
+    (#{comma}(#{float}))?
+  #{pe}"), (color, expression) ->
+  [_,p,_,a] = @onigRegExp.searchSync(expression)
+
+  p = parseFloat(p.match) / 100 * 255
+  color.rgb = [p, p, p]
+  color.alpha = if a.match.length then parseFloat(a.match) else 1
 
 # dodgerblue
 colors = Object.keys(Color.namedColors)
