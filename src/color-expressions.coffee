@@ -208,11 +208,12 @@ Color.addExpression 'hwb', strip("
   color.alpha = if a.match.length then parseFloat(a.match) else 1
 
 # gray(50%)
+# The priority is set to 1 to make sure that it appears before named colors
 Color.addExpression 'gray', strip("
   gray#{ps}\\s*
     (#{percent})
     (#{comma}(#{float}))?
-  #{pe}"), (color, expression) ->
+  #{pe}"), 1, (color, expression) ->
   [_,p,_,a] = @onigRegExp.searchSync(expression)
 
   p = parseFloat(p.match) / 100 * 255
