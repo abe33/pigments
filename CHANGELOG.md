@@ -1,3 +1,10 @@
+<a name="v1.9.1"></a>
+# v1.9.1 (2014-07-17)
+
+## :bug: Bug Fixes
+
+- Fix expressions order for gray functional notation ([f510f7e6](https://github.com/abe33/pigments/commit/f510f7e6345a8313c0a57fb756ea1b1cddc7cef1))
+
 <a name="v1.9.0"></a>
 # v1.9.0 (2014-07-16)
 
