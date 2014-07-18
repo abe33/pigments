@@ -1,3 +1,12 @@
+<a name="v1.10.0"></a>
+# v1.10.0 (2014-07-18)
+
+## :sparkles: Features
+
+- Add support for sass `change-color` function ([0869240a](https://github.com/abe33/pigments/commit/0869240a64189c94a0beee9ba7ecab9f3f9d7ef5))
+- Add support for sass `scale-color` function ([359ecd63](https://github.com/abe33/pigments/commit/359ecd63c283df00c93d838c988f3862993d1f21))
+- Add support for sass `adjust-color` function ([bb6b2d2d](https://github.com/abe33/pigments/commit/bb6b2d2dcb8a3b262a87845edb1358639b944d18))
+
 <a name="v1.9.1"></a>
 # v1.9.1 (2014-07-17)
 
