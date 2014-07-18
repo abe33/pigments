@@ -136,6 +136,30 @@ class Color
   # Public: Read Only: The length of the color, always 4.
   @::accessor 'length', get: -> 4
 
+  @::accessor 'hue', {
+    get: -> @hsl[0]
+    set: (hue) ->
+      hsl = @hsl
+      hsl[0] = hue
+      @hsl = hsl
+  }
+
+  @::accessor 'saturation', {
+    get: -> @hsl[1]
+    set: (saturation) ->
+      hsl = @hsl
+      hsl[1] = saturation
+      @hsl = hsl
+  }
+
+  @::accessor 'lightness', {
+    get: -> @hsl[2]
+    set: (lightness) ->
+      hsl = @hsl
+      hsl[2] = lightness
+      @hsl = hsl
+  }
+
   # Public: A {Color} object can be created with any of the expressions it
   # supports. Each expression handler is tested against the expression and
   # the first to match is used.

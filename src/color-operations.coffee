@@ -16,6 +16,7 @@ cssColor = require 'css-color-function'
 
 {
   strip
+  split
   clamp
   clampInt
   parseIntOrPercent
@@ -202,3 +203,17 @@ Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression
 Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color, expression) ->
   rgba = cssColor.convert(expression)
   color.rgba = new Color(rgba).rgba
+
+
+# adjust-color(red, $lightness: 30%)
+Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (color, expression) ->
+  [_, subexpr] = @onigRegExp.searchSync(expression)
+  [subject, params...] = split(subexpr.match)
+
+  refColor = new Color(subject)
+
+  for param in params
+    [_, name, value] = ///\$(\w+):\s*(-?#{float})///.exec(param)
+    refColor[name] += parseFloat(value)
+
+  color.rgba = refColor.rgba

@@ -90,4 +90,8 @@ describe 'Color', ->
 
   itShouldParseTheColor('tint(#fd0cc7,66%)', 254, 172, 235)
   itShouldParseTheColor('color(#fd0cc7 tint(66%))', 254, 172, 236)
+
+  itShouldParseTheColor('adjust-color(#102030, $red: -5, $blue: 5)', 11, 32, 53)
+  itShouldParseTheColor('adjust-color(hsl(25, 100%, 80%), $lightness: -30%, $alpha: -0.4)', 255, 106, 0, 0.6)
+
   itShouldParseTheColor('shade(#fd0cc7,66%)', 86, 4, 67)
