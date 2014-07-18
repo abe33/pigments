@@ -23,6 +23,15 @@ cssColor = require 'css-color-function'
   parseFloatOrPercent
 } = require './utils'
 
+MAX_PER_COMPONENT =
+  red: 255
+  green: 255
+  blue: 255
+  alpha: 1
+  hue: 360
+  saturation: 100
+  lightness: 100
+
 # darken(#666666, 20%)
 Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent})#{pe}", (color, expression) ->
   [_, subexpr, amount] = @onigRegExp.searchSync(expression)
@@ -204,7 +213,6 @@ Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color
   rgba = cssColor.convert(expression)
   color.rgba = new Color(rgba).rgba
 
-
 # adjust-color(red, $lightness: 30%)
 Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (color, expression) ->
   [_, subexpr] = @onigRegExp.searchSync(expression)
@@ -215,5 +223,27 @@ Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 
   for param in params
     [_, name, value] = ///\$(\w+):\s*(-?#{float})///.exec(param)
     refColor[name] += parseFloat(value)
+
+  color.rgba = refColor.rgba
+
+# scale-color(red, $lightness: 30%)
+Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (color, expression) ->
+
+  [_, subexpr] = @onigRegExp.searchSync(expression)
+  [subject, params...] = split(subexpr.match)
+
+  refColor = new Color(subject)
+
+  for param in params
+    [_, name, value] = ///\$(\w+):\s*(-?#{float})///.exec(param)
+    value = parseFloat(value) / 100
+
+    result = if value > 0
+      dif = MAX_PER_COMPONENT[name] - refColor[name]
+      result = refColor[name] + dif * value
+    else
+      result = refColor[name] * (1+value)
+
+    refColor[name] = result
 
   color.rgba = refColor.rgba
