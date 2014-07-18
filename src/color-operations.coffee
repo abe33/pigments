@@ -247,3 +247,16 @@ Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1,
     refColor[name] = result
 
   color.rgba = refColor.rgba
+
+# change-color(red, $lightness: 30%)
+Color.addExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (color, expression) ->
+  [_, subexpr] = @onigRegExp.searchSync(expression)
+  [subject, params...] = split(subexpr.match)
+
+  refColor = new Color(subject)
+
+  for param in params
+    [_, name, value] = ///\$(\w+):\s*(-?#{float})///.exec(param)
+    refColor[name] = parseFloat(value)
+
+  color.rgba = refColor.rgba

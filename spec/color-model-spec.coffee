@@ -95,5 +95,6 @@ describe 'Color', ->
   itShouldParseTheColor('adjust-color(hsl(25, 100%, 80%), $lightness: -30%, $alpha: -0.4)', 255, 106, 0, 0.6)
 
   itShouldParseTheColor('scale-color(rgb(200, 150, 170), $green: -40%, $blue: 70%)', 200, 90, 230)
+  itShouldParseTheColor('change-color(rgb(200, 150, 170), $green: 40, $blue: 70)', 200, 40, 70)
 
   itShouldParseTheColor('shade(#fd0cc7,66%)', 86, 4, 67)
