@@ -92,7 +92,7 @@ class ColorParsing extends Mixin
           [matchStart, matchEnd] = result.range
 
           if matchEnd <= end
-            result.color = new Color(result.match)
+            result.color = new Color(result.match, variablesMap)
 
             result.bufferRange = new Range(
               buffer.positionForCharacterIndex(result.range[0]),
@@ -223,8 +223,8 @@ class ColorParsing extends Mixin
   # accordingly.
   #
   # colorExpression - A {String} to parse
-  parseExpression: (colorExpression) ->
+  parseExpression: (colorExpression, fileVariables={}) ->
     for expr in @constructor.sortedColorExpressions()
       if expr.canHandle(colorExpression)
-        expr.handle(this, colorExpression)
+        expr.handle(this, colorExpression, fileVariables)
         return

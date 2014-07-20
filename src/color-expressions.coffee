@@ -12,12 +12,15 @@ Color = require './color-model'
   hexa
   ps
   pe
+  variables
 } = require './regexes'
 
 {
   strip
   clamp
   clampInt
+  parseInt
+  parseFloat
   parseIntOrPercent
   parseFloatOrPercent
 } = require './utils'
@@ -52,118 +55,118 @@ Color.addExpression 'int_hexa_6', "0x(#{hexa}{6})(?!#{hexa})", (color, expressio
 # rgb(50,120,200)
 Color.addExpression 'css_rgb', strip("
   rgb#{ps}\\s*
-    #{intOrPercent}
+    (#{intOrPercent}|#{variables})
     #{comma}
-    #{intOrPercent}
+    (#{intOrPercent}|#{variables})
     #{comma}
-    #{intOrPercent}
+    (#{intOrPercent}|#{variables})
   #{pe}
-"), (color, expression) ->
-  [_,r,g,b] = @onigRegExp.searchSync(expression)
+"), (color, expression, fileVariables) ->
+  [_,r,_,_,g,_,_,b] = @onigRegExp.searchSync(expression)
 
-  color.red = parseIntOrPercent(r.match)
-  color.green = parseIntOrPercent(g.match)
-  color.blue = parseIntOrPercent(b.match)
+  color.red = parseIntOrPercent(r.match, fileVariables)
+  color.green = parseIntOrPercent(g.match, fileVariables)
+  color.blue = parseIntOrPercent(b.match, fileVariables)
   color.alpha = 1
 
 # rgba(50,120,200,0.7)
 Color.addExpression 'css_rgba', strip("
   rgba#{ps}\\s*
-    #{intOrPercent}
+    (#{intOrPercent}|#{variables})
     #{comma}
-    #{intOrPercent}
+    (#{intOrPercent}|#{variables})
     #{comma}
-    #{intOrPercent}
+    (#{intOrPercent}|#{variables})
     #{comma}
-    (#{float})
+    (#{float}|#{variables})
   #{pe}
-"), (color, expression) ->
-  [_,r,g,b,a] = @onigRegExp.searchSync(expression)
+"), (color, expression, fileVariables) ->
+  [_,r,_,_,g,_,_,b,_,_,a] = @onigRegExp.searchSync(expression)
 
-  color.red = parseIntOrPercent(r.match)
-  color.green = parseIntOrPercent(g.match)
-  color.blue = parseIntOrPercent(b.match)
-  color.alpha = parseFloat(a.match)
+  color.red = parseIntOrPercent(r.match, fileVariables)
+  color.green = parseIntOrPercent(g.match, fileVariables)
+  color.blue = parseIntOrPercent(b.match, fileVariables)
+  color.alpha = parseFloat(a.match, fileVariables)
 
 # hsl(210,50%,50%)
 Color.addExpression 'css_hsl', strip("
   hsl#{ps}\\s*
-    (#{int})
+    (#{int}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
   #{pe}
-"), (color, expression) ->
-  [_,h,s,l] = @onigRegExp.searchSync(expression)
+"), (color, expression, fileVariables) ->
+  [_,h,_,s,_,l] = @onigRegExp.searchSync(expression)
 
   color.hsl = [
-    parseInt(h.match)
-    parseFloat(s.match)
-    parseFloat(l.match)
+    parseInt(h.match, fileVariables)
+    parseFloat(s.match, fileVariables)
+    parseFloat(l.match, fileVariables)
   ]
   color.alpha = 1
 
 # hsla(210,50%,50%,0.7)
 Color.addExpression 'css_hsla', strip("
   hsla#{ps}\\s*
-    (#{int})
+    (#{int}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
     #{comma}
-    (#{float})
+    (#{float}|#{variables})
   #{pe}
-"), (color, expression) ->
-  [_,h,s,l,a] = @onigRegExp.searchSync(expression)
+"), (color, expression, fileVariables) ->
+  [_,h,_,s,_,l,_,a] = @onigRegExp.searchSync(expression)
 
   color.hsl = [
-    parseInt(h.match)
-    parseFloat(s.match)
-    parseFloat(l.match)
+    parseInt(h.match,fileVariables)
+    parseFloat(s.match,fileVariables)
+    parseFloat(l.match,fileVariables)
   ]
-  color.alpha = parseFloat(a.match)
+  color.alpha = parseFloat(a.match,fileVariables)
 
 # hsv(210,70%,90%)
 Color.addExpression 'hsv', strip("
   hsv#{ps}\\s*
-    (#{int})
+    (#{int}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
   #{pe}
-"), (color, expression) ->
-  [_,h,s,v] = @onigRegExp.searchSync(expression)
+"), (color, expression, fileVariables) ->
+  [_,h,_,s,_,v] = @onigRegExp.searchSync(expression)
 
   color.hsv = [
-    parseInt(h.match)
-    parseFloat(s.match)
-    parseFloat(v.match)
+    parseInt(h.match, fileVariables)
+    parseFloat(s.match, fileVariables)
+    parseFloat(v.match, fileVariables)
   ]
   color.alpha = 1
 
 # hsva(210,70%,90%,0.7)
 Color.addExpression 'hsva', strip("
   hsva#{ps}\\s*
-    (#{int})
+    (#{int}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
     #{comma}
-    (#{float})
+    (#{float}|#{variables})
   #{pe}
-"), (color, expression) ->
-  [_,h,s,v,a] = @onigRegExp.searchSync(expression)
+"), (color, expression, fileVariables) ->
+  [_,h,_,s,_,v,_,a] = @onigRegExp.searchSync(expression)
 
   color.hsv = [
-    parseInt(h.match)
-    parseFloat(s.match)
-    parseFloat(v.match)
+    parseInt(h.match, fileVariables)
+    parseFloat(s.match, fileVariables)
+    parseFloat(v.match, fileVariables)
   ]
-  color.alpha = parseFloat(a.match)
+  color.alpha = parseFloat(a.match, fileVariables)
 
 
 # vec4(0.2, 0.5, 0.9, 0.7)
@@ -190,22 +193,22 @@ Color.addExpression 'vec4', strip("
 # hwb(210,40%,40%)
 Color.addExpression 'hwb', strip("
   hwb#{ps}\\s*
-    (#{int})
+    (#{int}|#{variables})
     #{comma}
-    (#{percent})
+    (#{percent}|#{variables})
     #{comma}
-    (#{percent})
-    (#{comma}(#{float}))?
+    (#{percent}|#{variables})
+    (#{comma}(#{float}|#{variables}))?
   #{pe}
-"), (color, expression) ->
-  [_,h,w,b,_,a] = @onigRegExp.searchSync(expression)
+"), (color, expression, fileVariables) ->
+  [_,h,_,w,_,b,_,_,a] = @onigRegExp.searchSync(expression)
 
   color.hwb = [
-    parseInt(h.match)
-    parseFloat(w.match)
-    parseFloat(b.match)
+    parseInt(h.match, fileVariables)
+    parseFloat(w.match, fileVariables)
+    parseFloat(b.match, fileVariables)
   ]
-  color.alpha = if a.match.length then parseFloat(a.match) else 1
+  color.alpha = if a.match.length then parseFloat(a.match, fileVariables) else 1
 
 # gray(50%)
 # The priority is set to 1 to make sure that it appears before named colors

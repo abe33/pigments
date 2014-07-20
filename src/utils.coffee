@@ -3,17 +3,38 @@ utils =
   strip: (str) -> str.replace(/\s+/g, '')
   clamp: (n) -> Math.min(1, Math.max(0, n))
   clampInt: (n, max=100) -> Math.min(max, Math.max(0, n))
-  parseIntOrPercent: (value) ->
-    if value.indexOf('%') isnt -1
-      value = Math.round(parseFloat(value) * 2.55)
-    else
-      value = parseInt(value)
+  parseFloat: (value, vars={}) ->
+    res = parseFloat(value)
+    res = parseFloat(vars[value]?.value) if isNaN(res)
+    res
 
-  parseFloatOrPercent: (amount) ->
-    if amount.indexOf('%') isnt -1
-      parseFloat(amount) / 100
+  parseInt: (value, base, vars={}) ->
+    [base, vars] = [10, base] if typeof base is 'object'
+    res = parseInt(value, base)
+    res = parseInt(vars[value]?.value, base) if isNaN(res)
+    res
+
+  parseIntOrPercent: (value, vars={}) ->
+    value = vars[value]?.value unless /\d+/.test(value)
+    return NaN unless value?
+
+    if value.indexOf('%') isnt -1
+      res = Math.round(parseFloat(value) * 2.55)
     else
-      parseFloat(amount)
+      res = parseInt(value)
+
+    res
+
+  parseFloatOrPercent: (amount, vars={}) ->
+    amount = vars[amount]?.value unless /\d+/.test(amount)
+    return NaN unless amount?
+
+    if amount.indexOf('%') isnt -1
+      res = parseFloat(amount) / 100
+    else
+      res = parseFloat(amount)
+
+    res
 
   findClosingIndex: (s, startIndex=0, openingChar="[", closingChar="]") ->
     index = startIndex

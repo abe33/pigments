@@ -57,7 +57,9 @@ class Color
   @colorComponents.forEach ([component, index]) =>
     @::accessor component, {
       get: -> @[index]
-      set: (component) -> @[index] = component
+      set: (component) ->
+        @[index] = component
+        @isInvalid = true if isNaN(component)
     }
 
   # Public: The `name` accessor gives access to the color's name.
@@ -163,11 +165,11 @@ class Color
   # Public: A {Color} object can be created with any of the expressions it
   # supports. Each expression handler is tested against the expression and
   # the first to match is used.
-  constructor: (colorExpression = null) ->
-    [@red, @green, @blue, @alpha] = [0, 0, 0, 1]
+  constructor: (colorExpression=null, fileVariables={}) ->
+    [@red, @green, @blue, @alpha, @isInvalid] = [0, 0, 0, 1, false]
 
     if colorExpression?
-      @parseExpression(colorExpression)
+      @parseExpression(colorExpression, fileVariables)
 
   # Public: Returns the luma value for the current color
   luma: ->

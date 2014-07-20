@@ -2,6 +2,7 @@ int = '\\d+'
 decimal = "\\.#{int}"
 float = "(?:#{int}|#{int}#{decimal}|#{decimal})"
 percent = "#{float}%"
+variables = '(@[a-zA-Z0-9\\-_]+|\\$[a-zA-Z0-9\\-_]+|[a-zA-Z_][a-zA-Z0-9\\-_]*)'
 
 module.exports =
   int: int
@@ -14,3 +15,4 @@ module.exports =
   hexa: '[\\da-fA-F]'
   ps: '\\(\\s*'
   pe: '\\s*\\)'
+  variables: variables

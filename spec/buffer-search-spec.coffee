@@ -302,3 +302,36 @@ describe 'Color', ->
                 isColor: false
             })
             done()
+
+  describe 'with a buffer where expressions relies on non-color variables', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: """
+        $factor: 40%
+
+        $color: scale-color(#ff0000, $lightness: $factor)
+        $other-color: saturate(#123456, $factor)
+      """
+
+    it 'uses the other variables from the file', (done) ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+      waitsFor -> not promise.isPending()
+
+      runs ->
+        promise.then (results) ->
+          expect(results.length).toEqual(2)
+
+          expect(results[0].match).toEqual('scale-color(#ff0000, $lightness: $factor)')
+          expect(results[0].color[0]).toBeCloseTo(255)
+          expect(results[0].color[1]).toBeCloseTo(102)
+          expect(results[0].color[2]).toBeCloseTo(102)
+          expect(results[0].color[3]).toBeCloseTo(1)
+
+          expect(results[1].match).toEqual('saturate(#123456, $factor)')
+          expect(results[1].color[0]).toBeCloseTo(0)
+          expect(results[1].color[1]).toBeCloseTo(52)
+          expect(results[1].color[2]).toBeCloseTo(104)
+          expect(results[1].color[3]).toBeCloseTo(1)
+
+          done()
