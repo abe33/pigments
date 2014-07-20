@@ -1,3 +1,18 @@
+<a name="v1.11.0"></a>
+# v1.11.0 (2014-07-20)
+
+## :sparkles: Features
+
+- Add support for variables in color functions ([ee67434a](https://github.com/abe33/pigments/commit/ee67434acc0ae8542e8cb02235247216561900fc))  
+  <br>Includes:
+  - Any parameter can now be a variable
+  - Any missing variable will mark the color as invalid
+
+## :bug: Bug Fixes
+
+- Fix error raised if the param in sass function is not a number ([fd2f2fd6](https://github.com/abe33/pigments/commit/fd2f2fd678d93d4ed37c23304842d6f89c114950), [#23](https://github.com/abe33/pigments/issues/23))
+
+
 <a name="v1.10.0"></a>
 # v1.10.0 (2014-07-18)
 
