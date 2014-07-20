@@ -70,12 +70,15 @@ class ColorParsing extends Mixin
     variablesPromise = if variables?
       Q.fcall -> variables
     else
-      @scanBufferForColorVariablesInRange(buffer, range)
+      @scanBufferForVariablesInRange(buffer, range)
 
     Color = this
     variablesPromise
     .then (variablesMap) =>
-      variables = (k for k of variablesMap).map (s) -> _.escapeRegExp(s)
+      variables = (k for k of variablesMap)
+      .filter (s) ->
+        variablesMap[s].isColor
+      .map (s) -> _.escapeRegExp(s)
 
       if variables.length > 0
         paletteRegexp = '(' + variables.join('|') + ')\\b(?!-|\\s*[\\.:=])'

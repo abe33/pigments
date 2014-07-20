@@ -15,10 +15,10 @@ class ColorVariablesParsing extends Mixin
   @removeVariableExpression: (name) ->
     delete @variableExpressions[name]
 
-  @scanBufferForColorVariables: (buffer, callback) ->
-    @scanBufferForColorVariablesInRange(buffer, [[0, 0], [Infinity, Infinity]], callback)
+  @scanBufferForVariables: (buffer, callback) ->
+    @scanBufferForVariablesInRange(buffer, [[0, 0], [Infinity, Infinity]], callback)
 
-  @scanBufferForColorVariablesInRange: (buffer, range, callback) ->
+  @scanBufferForVariablesInRange: (buffer, range, callback) ->
     throw new Error 'Missing buffer' unless buffer?
     Range = buffer.constructor.Range
 
@@ -45,7 +45,10 @@ class ColorVariablesParsing extends Mixin
             [end.row, end.column]
           ]
           if @canHandle(value)
-            results[key] = {value, range}
+            results[key] = {value, range, isColor: true}
+            cb?(match)
+          else
+            results[key] = {value, range, isColor: false}
             cb?(match)
 
           searchOccurences(str, cb, match[0].end)

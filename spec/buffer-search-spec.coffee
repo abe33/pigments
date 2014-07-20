@@ -130,11 +130,12 @@ describe 'Color', ->
           expect(true).toEqual(true)
 
     describe 'with a variables hash', ->
-      it 'creates the colors using the passed-in variables', ->
+      it 'creates the colors using the passed-in variables', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         variables =
           color1:
             value: 'red'
+            isColor: true
 
         promise = Color.scanBufferForColors(@buffer, variables, searchCallback)
 
@@ -149,7 +150,9 @@ describe 'Color', ->
             expect(last.color.blue).toEqual(0)
             expect(last.color.alpha).toEqual(0.5)
 
-  describe '.scanBufferForColorVariables', ->
+            done()
+
+  describe '.scanBufferForVariables', ->
     describe 'with a buffer containing less variables', ->
       beforeEach ->
         @buffer = new TextBuffer {
@@ -165,20 +168,26 @@ describe 'Color', ->
 
       it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
+        promise = Color.scanBufferForVariables(@buffer, searchCallback)
 
         waitsFor -> not promise.isPending()
 
         runs ->
-          expect(searchCallback.callCount).toEqual(2)
+          expect(searchCallback.callCount).toEqual(3)
           promise.then (results) ->
             expect(results).toEqual({
               '@red':
                 value: '#f00'
                 range: [[0,0], [0,10]]
+                isColor: true
               '@light-red_var':
                 value: 'lighten(@red, 10%)'
                 range: [[2,0], [2,35]]
+                isColor: true
+              '@not_a_color':
+                value: '10px'
+                range: [[4,0],[4,19]]
+                isColor: false
             })
             done()
 
@@ -196,20 +205,26 @@ describe 'Color', ->
         }
       it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
+        promise = Color.scanBufferForVariables(@buffer, searchCallback)
 
         waitsFor -> not promise.isPending()
 
         runs ->
-          expect(searchCallback.callCount).toEqual(2)
+          expect(searchCallback.callCount).toEqual(3)
           promise.then (results) ->
             expect(results).toEqual({
               '$red':
                 value: '#f00'
                 range: [[0,0], [0,10]]
+                isColor: true
               '$light-red_var':
                 value: 'lighten($red, 10%)'
                 range: [[2,0], [2,34]]
+                isColor: true
+              '$not_a_color':
+                value: '10px'
+                range: [[4,0],[4,18]]
+                isColor: false
             })
             done()
 
@@ -227,20 +242,26 @@ describe 'Color', ->
         }
       it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
+        promise = Color.scanBufferForVariables(@buffer, searchCallback)
 
         waitsFor -> not promise.isPending()
 
         runs ->
-          expect(searchCallback.callCount).toEqual(2)
+          expect(searchCallback.callCount).toEqual(3)
           promise.then (results) ->
             expect(results).toEqual({
               '$red':
                 value: '#f00'
                 range: [[0,0], [0,11]]
+                isColor: true
               '$light-red_var':
                 value: 'lighten($red, 10%)'
                 range: [[2,0], [2,35]]
+                isColor: true
+              '$not_a_color':
+                value: '10px'
+                range: [[4,0],[4,19]]
+                isColor: false
             })
             done()
 
@@ -258,19 +279,25 @@ describe 'Color', ->
         }
       it 'calls the callback two times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColorVariables(@buffer, searchCallback)
+        promise = Color.scanBufferForVariables(@buffer, searchCallback)
 
         waitsFor -> not promise.isPending()
 
         runs ->
-          expect(searchCallback.callCount).toEqual(2)
+          expect(searchCallback.callCount).toEqual(3)
           promise.then (results) ->
             expect(results).toEqual({
               'red':
                 value: '#f00'
                 range: [[0,0], [0,10]]
+                isColor: true
               'light-red_var':
                 value: 'lighten(red, 10%)'
                 range: [[2,0], [2,33]]
+                isColor: true
+              'not_a_color':
+                value: '10px'
+                range: [[4,0],[4,18 ]]
+                isColor: false
             })
             done()
