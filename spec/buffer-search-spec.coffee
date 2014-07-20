@@ -120,7 +120,7 @@ describe 'Color', ->
       beforeEach ->
         @buffer = new TextBuffer text: fs.readFileSync(path.resolve __dirname, './fixtures/real_world_example.coffee').toString()
 
-      it 'calls the callback four times', ->
+      it 'calls the callback four times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForColors(@buffer, searchCallback)
 
@@ -128,6 +128,7 @@ describe 'Color', ->
 
         runs ->
           expect(true).toEqual(true)
+          done()
 
     describe 'with a variables hash', ->
       it 'creates the colors using the passed-in variables', (done) ->
