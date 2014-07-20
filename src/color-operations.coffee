@@ -213,6 +213,12 @@ Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color
   rgba = cssColor.convert(expression)
   color.rgba = new Color(rgba).rgba
 
+parseParam = (param, block) ->
+  re = ///\$(\w+):\s*(-?#{float})///
+  if re.test(param)
+    [_, name, value] = re.exec(param)
+    block(name, value)
+
 # adjust-color(red, $lightness: 30%)
 Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (color, expression) ->
   [_, subexpr] = @onigRegExp.searchSync(expression)
@@ -221,8 +227,8 @@ Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 
   refColor = new Color(subject)
 
   for param in params
-    [_, name, value] = ///\$(\w+):\s*(-?#{float})///.exec(param)
-    refColor[name] += parseFloat(value)
+    parseParam param, (name, value) ->
+      refColor[name] += parseFloat(value)
 
   color.rgba = refColor.rgba
 
@@ -235,16 +241,16 @@ Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1,
   refColor = new Color(subject)
 
   for param in params
-    [_, name, value] = ///\$(\w+):\s*(-?#{float})///.exec(param)
-    value = parseFloat(value) / 100
+    parseParam param, (name, value) ->
+      value = parseFloat(value) / 100
 
-    result = if value > 0
-      dif = MAX_PER_COMPONENT[name] - refColor[name]
-      result = refColor[name] + dif * value
-    else
-      result = refColor[name] * (1+value)
+      result = if value > 0
+        dif = MAX_PER_COMPONENT[name] - refColor[name]
+        result = refColor[name] + dif * value
+      else
+        result = refColor[name] * (1+value)
 
-    refColor[name] = result
+      refColor[name] = result
 
   color.rgba = refColor.rgba
 
@@ -256,7 +262,7 @@ Color.addExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 
   refColor = new Color(subject)
 
   for param in params
-    [_, name, value] = ///\$(\w+):\s*(-?#{float})///.exec(param)
-    refColor[name] = parseFloat(value)
+    parseParam param, (name, value) ->
+      refColor[name] = parseFloat(value)
 
   color.rgba = refColor.rgba
