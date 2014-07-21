@@ -240,7 +240,7 @@ parseParam = (param, fileVariables={}, block) ->
   re = ///\$(\w+):\s*((-?#{float})|#{variables})///
   if re.test(param)
     [_, name, value] = re.exec(param)
-    value = fileVariables[value].value if ///#{variables}///.test(value)
+    value = fileVariables[value]?.value if ///#{variables}///.test(value)
 
     block(name, value)
 

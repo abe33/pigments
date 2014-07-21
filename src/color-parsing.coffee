@@ -84,7 +84,7 @@ class ColorParsing extends Mixin
         paletteRegexp = '(' + variables.join('|') + ')\\b(?!-|\\s*[\\.:=])'
 
         Color.addExpression 'variables', paletteRegexp, 1, (color, expr) =>
-          color.rgba = new Color(variablesMap[expr].value).rgba
+          color.rgba = new Color(variablesMap[expr].value, variablesMap).rgba
 
       results = []
       iterator = (result) =>

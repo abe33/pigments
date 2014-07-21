@@ -335,3 +335,28 @@ describe 'Color', ->
           expect(results[1].color[3]).toBeCloseTo(1)
 
           done()
+
+    describe 'with a variable containing a dash', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+          $function-factor: -7%;
+
+          $bg: scale-color(#fff, $lightness: $function-factor);
+
+          $border-color: scale-color($bg, $lightness: $function-factor);
+        """
+
+      it 'uses the other variables from the file', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (results) ->
+
+            expect(results.length).toEqual(2)
+
+            expect(results[0].match).toEqual('scale-color(#fff, $lightness: $function-factor)')
+            expect(results[1].match).toEqual('scale-color($bg, $lightness: $function-factor)')
+            done()
