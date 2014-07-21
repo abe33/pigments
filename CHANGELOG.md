@@ -1,3 +1,10 @@
+a name="v1.11.1"></a>
+# v1.11.1 (2014-07-21)
+
+## :bug: Bug Fixes
+
+- Fix broken variable handling at n+1 ([f34be5b0](https://github.com/abe33/pigments/commit/f34be5b082ce60a11ad3f710604e410b60d5a4e8), [abe33/atom-color-highlight#23](https://github.com/abe33/atom-color-highlight/issues/23))
+
 <a name="v1.11.0"></a>
 # v1.11.0 (2014-07-20)
 
