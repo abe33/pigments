@@ -232,8 +232,11 @@ Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression
 
 # color(green tint(50%))
 Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color, expression) ->
-  rgba = cssColor.convert(expression)
-  color.rgba = new Color(rgba).rgba
+  try
+    rgba = cssColor.convert(expression)
+    color.rgba = new Color(rgba).rgba
+  catch e
+    color.isInvalid = true
 
 parseParam = (param, fileVariables={}, block) ->
   [block, fileVariables] = [fileVariables, {}] if typeof fileVariables is 'function'
