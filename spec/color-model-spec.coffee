@@ -163,19 +163,21 @@ describe 'Color', ->
 
   itShouldParseTheColor('cyan', 0, 255, 255)
 
-  itShouldParseTheColor('darken(cyan, 20%)', 0, 204, 204)
+  itShouldParseTheColor('darken(cyan, 20%)', 0, 153, 153)
+  itShouldParseTheColor('darken(#fff, 100%)', 0, 0, 0)
   itShouldParseTheColorAsInvalid('darken(cyan, $r)')
   itShouldParseTheColorWithVariables('darken(cyan, $r)', {
     '$r':
       value: '20%'
-  }, 0, 204, 204)
+  }, 0, 153, 153)
 
-  itShouldParseTheColor('lighten(cyan, 20%)', 51, 255, 255)
+  itShouldParseTheColor('lighten(cyan, 20%)', 102, 255, 255)
+  itShouldParseTheColor('lighten(#000, 100%)', 255, 255, 255)
   itShouldParseTheColorAsInvalid('lighten(cyan, $r)')
   itShouldParseTheColorWithVariables('lighten(cyan, $r)', {
     '$r':
       value: '20%'
-  }, 51, 255, 255)
+  }, 102, 255, 255)
 
   itShouldParseTheColor('transparentize(cyan, 50%)', 0, 255, 255, 0.5)
   itShouldParseTheColor('transparentize(cyan, 0.5)', 0, 255, 255, 0.5)
