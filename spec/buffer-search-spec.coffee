@@ -360,3 +360,29 @@ describe 'Color', ->
             expect(results[0].match).toEqual('scale-color(#fff, $lightness: $function-factor)')
             expect(results[1].match).toEqual('scale-color($bg, $lightness: $function-factor)')
             done()
+
+    describe 'with a selector just after a color', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        $color_grey_lighter: #efefef
+
+        .foo
+          .bar
+            border-left: 1px solid $color_grey_lighter
+            border-right: 1px solid $color_grey_lighter
+
+        .baz
+          border-right: 1px solid $color_grey_lighter
+
+        """
+
+      it 'does not fail at finding the color preceding the selector', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (results) ->
+            expect(results.length).toEqual(4)
+            done()
