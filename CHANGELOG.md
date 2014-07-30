@@ -1,3 +1,12 @@
+<a name="v1.11.2"></a>
+# v1.11.2 (2014-07-27)
+
+## :bug: Bug Fixes
+
+- Fix invalid lighten/darken operation for less/sass ([8ac0214d](https://github.com/abe33/pigments/commit/8ac0214dd67ea34b77be21ce03440f9de914f3fe), [abe33/atom-color-highlight#26](https://github.com/abe33/atom-color-highlight/issues/26))
+- Fix css color function raising exception when invalid ([a883ccad](https://github.com/abe33/pigments/commit/a883ccadb60a3498d01506ab821ed43e39992fe4), [abe33/atom-color-highlight#27](https://github.com/abe33/atom-color-highlight/issues/27))
+
+
 <a name="v1.11.1"></a>
 # v1.11.1 (2014-07-21)
 

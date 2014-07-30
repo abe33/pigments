@@ -46,7 +46,7 @@ Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{var
     baseColor = new Color(subexpr, fileVariables)
     [h,s,l] = baseColor.hsl
 
-    color.hsl = [h, s, clampInt(l - l * (amount / 100))]
+    color.hsl = [h, s, clampInt(l - amount)]
     color.alpha = baseColor.alpha
   else
     color.isInvalid = true
@@ -62,7 +62,7 @@ Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{v
     baseColor = new Color(subexpr)
     [h,s,l] = baseColor.hsl
 
-    color.hsl = [h, s, clampInt(l + l * (amount / 100))]
+    color.hsl = [h, s, clampInt(l + amount)]
     color.alpha = baseColor.alpha
   else
     color.isInvalid = true
@@ -232,8 +232,11 @@ Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression
 
 # color(green tint(50%))
 Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color, expression) ->
-  rgba = cssColor.convert(expression)
-  color.rgba = new Color(rgba).rgba
+  try
+    rgba = cssColor.convert(expression)
+    color.rgba = new Color(rgba).rgba
+  catch e
+    color.isInvalid = true
 
 parseParam = (param, fileVariables={}, block) ->
   [block, fileVariables] = [fileVariables, {}] if typeof fileVariables is 'function'
