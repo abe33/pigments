@@ -1,3 +1,10 @@
+<a name="v1.11.3"></a>
+# v1.11.3 (2014-07-30)
+
+## :bug: Bug Fixes
+
+- Fix missing match when a color variable is followed by a selector ([ea08dde0](https://github.com/abe33/pigments/commit/ea08dde07634218b435e9ff23b7411cef328c373))
+
 <a name="v1.11.2"></a>
 # v1.11.2 (2014-07-27)
 
