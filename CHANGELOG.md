@@ -1,3 +1,10 @@
+<a name="v2.0.0"></a>
+# v2.0.0 (2014-08-04)
+
+## :sparkles: Features
+
+- Upgrade to `node-oniguruma@3.x` in order to support Atom v.0.121.0
+
 <a name="v1.11.3"></a>
 # v1.11.3 (2014-07-30)
 
