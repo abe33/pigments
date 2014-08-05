@@ -24,6 +24,7 @@ cssColor = require 'css-color-function'
   parseFloat
   parseIntOrPercent
   parseFloatOrPercent
+  parseDegreesOrPercent
 } = require './utils'
 
 MAX_PER_COMPONENT =
@@ -101,12 +102,12 @@ Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{fl
     color.isInvalid = true
 
 # adjust-hue(#855, 60deg)
-Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr, amount] = @onigRegExp.searchSync(expression)
 
   subexpr = subexpr.match
 
-  amount = parseFloatOrPercent amount.match, fileVariables
+  amount = parseFloat amount.match, fileVariables
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr)

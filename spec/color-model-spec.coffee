@@ -229,6 +229,8 @@ describe 'Color', ->
 
   itShouldParseTheColor('adjust-hue(#811, 45deg)', 136, 106, 17)
   itShouldParseTheColor('adjust-hue(#811, -45deg)', 136, 17, 106)
+  itShouldParseTheColor('adjust-hue(#811, 45%)', 136, 106, 17)
+  itShouldParseTheColor('adjust-hue(#811, -45%)', 136, 17, 106)
 
   itShouldParseTheColorAsInvalid('adjust-hue(#811, $r)')
   itShouldParseTheColorWithVariables('adjust-hue(#811, $r)', {
