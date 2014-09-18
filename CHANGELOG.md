@@ -1,3 +1,10 @@
+<a name="v2.1.1"></a>
+# v2.1.1 (2014-09-18)
+
+## :bug: Bug Fixes
+
+- Fix infinite loop introduced in latest release ([0f966b2f](https://github.com/abe33/pigments/commit/0f966b2ff70e0a2aa03f062f50e3b97ef36240b6))
+
 <a name="v2.1.0"></a>
 # v2.0.1 (2014-09-18)
 
