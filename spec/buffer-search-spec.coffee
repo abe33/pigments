@@ -406,3 +406,18 @@ describe 'Color', ->
           promise.then (results) ->
             expect(results.length).toEqual(4)
             done()
+
+    describe 'with ambiguous definition', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: fs.readFileSync(path.resolve __dirname, './fixtures/infinite_loop.coffee').toString()
+
+      it 'does not find any color nor run into an infinite loop', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (results) ->
+            expect(results.length).toEqual(2)
+            done()

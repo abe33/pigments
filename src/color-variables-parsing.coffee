@@ -44,7 +44,7 @@ class ColorVariablesParsing extends Mixin
             [start.row, start.column]
             [end.row, end.column]
           ]
-          if @canHandle(value) or results[value]?
+          if @canHandle(value) or (results[value]? and results[value].isColor)
             results[key] = {value, range, isColor: true}
             cb?(match)
           else
