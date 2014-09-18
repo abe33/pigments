@@ -387,7 +387,7 @@ describe 'Color', ->
             expect(results.length).toEqual(4)
             done()
 
-    describe 'with more thant one aliased color variables', ->
+    describe 'with more than one aliased color variables', ->
       beforeEach ->
         @buffer = new TextBuffer text: """
         @one: #fff;
