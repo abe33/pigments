@@ -386,3 +386,23 @@ describe 'Color', ->
           promise.then (results) ->
             expect(results.length).toEqual(4)
             done()
+
+    describe 'with more thant one aliased color variables', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        @one: #fff;
+        @two: @one;
+        @three: @two;
+        @four: @three;
+        """
+
+      it 'finds all the aliases as color variables', ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        waitsFor -> not promise.isPending()
+
+        runs ->
+          promise.then (results) ->
+            expect(results.length).toEqual(4)
+            done()
