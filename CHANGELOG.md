@@ -1,3 +1,14 @@
+<a name="v2.1.0"></a>
+# v2.0.1 (2014-09-18)
+
+## :sparkles: Features
+
+- Add support for percents in adjust-hue function ([694c50bf](https://github.com/abe33/pigments/commit/694c50bf2e03c19788fcdc429934d00543f2b5fd))
+
+## :bug: Bug Fixes
+
+- Fix aliased color at level n+2 not detected ([9e0d4fbc](https://github.com/abe33/pigments/commit/9e0d4fbc57d49d424ca6883ce99f0df3d4c568fd), [abe33/atom-color-highlight#40](https://github.com/abe33/atom-color-highlight/issues/40))
+
 <a name="v2.0.0"></a>
 # v2.0.0 (2014-08-04)
 
