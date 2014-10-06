@@ -374,6 +374,23 @@ describe 'Color', ->
         promise.then (results) ->
           expect(results.length).toEqual(2)
           done()
+
+    describe 'with a variable name containing a named color', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        @blue
+        $green
+        """
+
+      it 'does not fail at ignoring matches', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        promise.then (results) ->
+          expect(results.length).toEqual(0)
+          done()
+
+
     describe 'with more than one aliased color variables', ->
       beforeEach ->
         @buffer = new TextBuffer text: """
