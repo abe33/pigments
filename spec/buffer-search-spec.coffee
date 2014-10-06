@@ -167,7 +167,7 @@ describe 'Color', ->
           filePath: 'some_path.less'
         }
 
-      it 'calls the callback two times', (done) ->
+      it 'calls the callback three times', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForVariables(@buffer, searchCallback)
 
