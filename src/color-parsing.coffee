@@ -75,13 +75,13 @@ class ColorParsing extends Mixin
     variablesPromise
     .then (variablesMap) =>
       variables = (k for k of variablesMap)
-            
+
       .filter (s) ->
         variablesMap[s].isColor
       .map (s) -> _.escapeRegExp(s)
 
       if variables.length > 0
-        paletteRegexp = '(' + variables.join('|') + ')\\b(?!-|[ \\t]*[\\.:=])'
+        paletteRegexp = '(' + variables.join('|') + ')(?!-|[ \\t]*[\\.:=])'
 
         Color.addExpression 'variables', paletteRegexp, 1, (color, expr) =>
           color.rgba = new Color(variablesMap[expr].value, variablesMap).rgba
@@ -93,7 +93,6 @@ class ColorParsing extends Mixin
 
           if matchEnd <= end
             result.color = new Color(result.match, variablesMap)
-            console.log result.color
 
             result.bufferRange = new Range(
               buffer.positionForCharacterIndex(result.range[0]),
