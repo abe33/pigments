@@ -360,6 +360,20 @@ describe 'Color', ->
           expect(results.length).toEqual(4)
           done()
 
+    describe 'with a variable name containing a previous variable', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        $color: #efefef
+        $color_blue: #efefef
+        """
+
+      it 'does not fail at ignoring matches', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        promise.then (results) ->
+          expect(results.length).toEqual(2)
+          done()
     describe 'with more than one aliased color variables', ->
       beforeEach ->
         @buffer = new TextBuffer text: """
