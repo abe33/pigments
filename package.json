@@ -30,7 +30,6 @@
     "underscore-plus": "1.x",
     "property-accessors": "1.x",
     "mixto": "1.x",
-    "oniguruma": "3.x",
     "q": "~1.0.1",
     "css-color-function": "0.1.x"
   },
