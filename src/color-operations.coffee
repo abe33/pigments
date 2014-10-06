@@ -38,10 +38,10 @@ MAX_PER_COMPONENT =
 
 # darken(#666666, 20%)
 Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
-  amount = parseFloat(amount.match, fileVariables)
+  subexpr = subexpr
+  amount = parseFloat(amount, fileVariables)
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, fileVariables)
@@ -54,10 +54,10 @@ Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{var
 
 # lighten(#666666, 20%)
 Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
-  amount = parseFloat(amount.match, fileVariables)
+  subexpr = subexpr
+  amount = parseFloat(amount, fileVariables)
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr)
@@ -72,10 +72,10 @@ Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{v
 # transparentize(#ffffff, 50%)
 # fadein(#ffffff, 0.5)
 Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, _, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, _, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
-  amount = parseFloatOrPercent amount.match, fileVariables
+  subexpr = subexpr
+  amount = parseFloatOrPercent amount, fileVariables
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr)
@@ -88,11 +88,11 @@ Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})
 # opacify(0x78ffffff, 50%)
 # fadeout(0x78ffffff, 0.5)
 Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, _, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, _, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
+  subexpr = subexpr
 
-  amount = parseFloatOrPercent amount.match, fileVariables
+  amount = parseFloatOrPercent amount, fileVariables
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr)
@@ -103,11 +103,11 @@ Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{fl
 
 # adjust-hue(#855, 60deg)
 Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
+  subexpr = subexpr
 
-  amount = parseFloat amount.match, fileVariables
+  amount = parseFloat amount, fileVariables
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr)
@@ -121,15 +121,15 @@ Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}
 # mix(#f00, #00F, 25%)
 # mix(#f00, #00F)
 Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}(#{floatOrPercent}|#{variables})|(#{notQuote})#{comma}(#{notQuote}))#{pe}", (color, expression, fileVariables) ->
-  [_, _, color1A, color2A, amount, _, _, color1B, color2B] = @onigRegExp.searchSync(expression)
+  [_, _, color1A, color2A, amount, _, _, color1B, color2B] = @onigRegExp.exec(expression)
 
-  if color1A.match.length > 0
-    color1 = color1A.match
-    color2 = color2A.match
-    amount = parseFloatOrPercent amount?.match, fileVariables
+  if color1A?
+    color1 = color1A
+    color2 = color2A
+    amount = parseFloatOrPercent amount, fileVariables
   else
-    color1 = color1B.match
-    color2 = color2B.match
+    color1 = color1B
+    color2 = color2B
     amount = 0.5
 
   if Color.canHandle(color1) and Color.canHandle(color2) and not isNaN(amount)
@@ -142,10 +142,10 @@ Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}
 
 # tint(red, 50%)
 Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
-  amount = parseFloatOrPercent(amount.match, fileVariables)
+  subexpr = subexpr
+  amount = parseFloatOrPercent(amount, fileVariables)
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr)
@@ -157,10 +157,10 @@ Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{
 
 # shade(red, 50%)
 Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
-  amount = parseFloatOrPercent(amount.match, fileVariables)
+  subexpr = subexpr
+  amount = parseFloatOrPercent(amount, fileVariables)
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr)
@@ -173,11 +173,11 @@ Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|
 # desaturate(#855, 20%)
 # desaturate(#855, 0.2)
 Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
+  subexpr = subexpr
 
-  amount = parseFloatOrPercent amount.match, fileVariables
+  amount = parseFloatOrPercent amount, fileVariables
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr)
@@ -191,11 +191,11 @@ Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatO
 # saturate(#855, 20%)
 # saturate(#855, 0.2)
 Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.searchSync(expression)
+  [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr.match
+  subexpr = subexpr
 
-  amount = parseFloatOrPercent amount.match, fileVariables
+  amount = parseFloatOrPercent amount, fileVariables
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, fileVariables)
@@ -209,8 +209,8 @@ Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPer
 # grayscale(red)
 # greyscale(red)
 Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color, expression) ->
-  [_, _, subexpr] = @onigRegExp.searchSync(expression)
-  subexpr = subexpr.match
+  [_, _, subexpr] = @onigRegExp.exec(expression)
+  subexpr = subexpr
 
   if Color.canHandle(subexpr)
     baseColor = new Color(subexpr)
@@ -221,8 +221,8 @@ Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color,
 
 # invert(green)
 Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression) ->
-  [_, subexpr] = @onigRegExp.searchSync(expression)
-  subexpr = subexpr.match
+  [_, subexpr] = @onigRegExp.exec(expression)
+  subexpr = subexpr
 
   if Color.canHandle(subexpr)
     baseColor = new Color(subexpr)
@@ -250,8 +250,8 @@ parseParam = (param, fileVariables={}, block) ->
 
 # adjust-color(red, $lightness: 30%)
 Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
-  [_, subexpr] = @onigRegExp.searchSync(expression)
-  [subject, params...] = split(subexpr.match)
+  [_, subexpr] = @onigRegExp.exec(expression)
+  [subject, params...] = split(subexpr)
 
   refColor = new Color(subject, fileVariables)
 
@@ -264,8 +264,8 @@ Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 
 # scale-color(red, $lightness: 30%)
 Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
 
-  [_, subexpr] = @onigRegExp.searchSync(expression)
-  [subject, params...] = split(subexpr.match)
+  [_, subexpr] = @onigRegExp.exec(expression)
+  [subject, params...] = split(subexpr)
   refColor = new Color(subject, fileVariables)
 
   for param in params
@@ -284,8 +284,8 @@ Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1,
 
 # change-color(red, $lightness: 30%)
 Color.addExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
-  [_, subexpr] = @onigRegExp.searchSync(expression)
-  [subject, params...] = split(subexpr.match)
+  [_, subexpr] = @onigRegExp.exec(expression)
+  [subject, params...] = split(subexpr)
 
   refColor = new Color(subject, fileVariables)
 

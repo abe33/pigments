@@ -1,9 +1,8 @@
 Q = require 'q'
-{OnigRegExp} = require 'oniguruma'
 
 {comma} = require './regexes'
 
-commaRegexp = new OnigRegExp('\\G' + comma)
+commaRegexp = new RegExp('^' + comma)
 
 # Internal: The {ColorOperation} class represents a color operation {String}
 # representation.
@@ -12,19 +11,19 @@ class ColorOperation
   # Public: Creates a {ColorOperation}.
   #
   # name - A {String} that identify the operation
-  # begin - An {OnigRegExp} {String} that matches the start of the operation.
+  # begin - An {RegExp} {String} that matches the start of the operation.
   # args... - A list of arguments for the operation. An argument can be either
-  #           a reference to the {Color} class or an {OnigRegExp} {String}.
+  #           a reference to the {Color} class or an {RegExp} {String}.
   #           When {Color} is passed, the argument will search for any operation
   #           forms registered in the {Color} class.
-  # end - An {OnigRegExp} {String} that matches the end of the operation
+  # end - An {RegExp} {String} that matches the end of the operation
   # handle - A {Function} that takes a {Color} to modify and an array of the
   #          arguments passed to the operation. When the registered argument is
   #          {Color}, the argument value will be parsed automatically as
   #          a {Color}.
   constructor: (@name, @begin, @args, @end, @handle, @Color) ->
-    @onigBegin = new OnigRegExp(@begin)
-    @onigEnd = new OnigRegExp('\\G' + @end)
+    @onigBegin = new RegExp(@begin)
+    @onigEnd = new RegExp('^' + @end)
 
   # Public: Returns `true` if the current {ColorOperation} can handle
   # the passed-in `operation` {String}.
@@ -57,7 +56,7 @@ class ColorOperation
         if arg is @Color
           argMatch = @Color.searchColorSync(text, start)
         else
-          onigRegex = new OnigRegExp('\\G' + arg)
+          onigRegex = new RegExp('^' + arg)
           match = onigRegex.searchSync(text, start)
           break unless match?
 
@@ -129,7 +128,7 @@ class ColorOperation
             defer.resolve(argMatch)
 
       else
-        onigRegex = new OnigRegExp('\\G' + arg)
+        onigRegex = new RegExp('^' + arg)
         onigRegex.search text, start, (err, match) ->
           return defer.reject(err) if err?
           return defer.reject("Can't find argument '#{arg}' at #{start}") unless match?

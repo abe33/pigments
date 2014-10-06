@@ -1,5 +1,4 @@
 Q = require 'q'
-{OnigRegExp} = require 'oniguruma'
 
 # Internal: The {ColorExpression} class represents a color {String}
 # representation. The expression is created using an {OnigRegExp} string
@@ -15,7 +14,7 @@ class ColorExpression
   # priority - A {Number} to priorize an expression over others. The greater
   #            the value, the sooner it will be evaluated.
   constructor: (@name, @regexp, @handle, @priority=0) ->
-    @onigRegExp = new OnigRegExp("^#{@regexp}$")
+    @onigRegExp = new RegExp("^#{@regexp}$", 'i')
 
   # Public: Returns `true` if the current {ColorExpression} can handle
   # the passed-in expression {String}.
@@ -24,7 +23,7 @@ class ColorExpression
   #
   # Returns `true` if the current {ColorExpression} can handle
   # the passed-in expression.
-  canHandle: (expression) -> @onigRegExp.testSync expression
+  canHandle: (expression) -> @onigRegExp.test expression
 
   # Public: Performs a synchronous search for this expression into the
   # passed-in `text` {String}.
@@ -40,11 +39,11 @@ class ColorExpression
   #         and end of the matching {String}
   searchSync: (text, start=0) ->
     results = undefined
-    re = new OnigRegExp(@regexp)
-    if match = re.searchSync(text, start)
-      [match] = match
-
-      range = [match.start, match.end]
+    re = new RegExp(@regexp, 'gi')
+    re.lastIndex = start
+    if [match] = re.exec(text)
+      {lastIndex} = re
+      range = [lastIndex - match.length, lastIndex]
       results =
         range: range
         match: text[range[0]...range[1]]
@@ -69,21 +68,19 @@ class ColorExpression
   search: (text, start=0, callback=->) ->
     defer = Q.defer()
 
-    re = new OnigRegExp(@regexp)
-    re.search text, start, (err, match) ->
-      unless match?
-        defer.resolve()
-        callback()
-        return
+    re = new RegExp(@regexp, 'gi')
 
-      [match] = match
+    unless ([match] = re.exec text)
+      defer.resolve()
+      callback()
+      return
 
-      range = [match.start, match.end]
-      results =
-        range: range
-        match: text[range[0]...range[1]]
+    range = [match.start, match.end]
+    results =
+      range: range
+      match: text[range[0]...range[1]]
 
-      defer.resolve(results)
-      callback(results)
+    defer.resolve(results)
+    callback(results)
 
     defer.promise
