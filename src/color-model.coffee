@@ -4,7 +4,6 @@ ColorConversions = require './color-conversions'
 ColorParsing = require './color-parsing'
 ColorVariablesParsing = require './color-variables-parsing'
 NamedColors = require './named-colors'
-{OnigRegExp} = require 'oniguruma'
 
 # Public: The {Color} class represent a RGBA color with its four components
 # `red`, `green`, `blue` and `alpha`. Internally the color components are

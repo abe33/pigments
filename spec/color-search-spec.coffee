@@ -1,5 +1,3 @@
-{OnigRegExp} = require 'oniguruma'
-
 Color = require '../lib/color-model'
 
 {

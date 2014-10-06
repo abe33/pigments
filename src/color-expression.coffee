@@ -8,7 +8,7 @@ class ColorExpression
   # Public: Creates the expression.
   #
   # name - A {String that identify the expression}
-  # regexp - The oniguruma regexp {String} that match the expression
+  # regexp - The regexp {String} that match the expression
   # handle - A {Function} that will be called to modify a {Color} accordingly
   #          to a {String} previsouly matched by this expression.
   # priority - A {Number} to priorize an expression over others. The greater
