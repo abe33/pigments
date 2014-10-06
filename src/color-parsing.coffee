@@ -1,7 +1,6 @@
 Mixin = require 'mixto'
 _ = require 'underscore-plus'
 Q = require 'q'
-{OnigRegExp} = require 'oniguruma'
 
 ColorExpression = require './color-expression'
 ColorOperation = require './color-operation'
@@ -76,6 +75,7 @@ class ColorParsing extends Mixin
     variablesPromise
     .then (variablesMap) =>
       variables = (k for k of variablesMap)
+            
       .filter (s) ->
         variablesMap[s].isColor
       .map (s) -> _.escapeRegExp(s)
@@ -93,6 +93,7 @@ class ColorParsing extends Mixin
 
           if matchEnd <= end
             result.color = new Color(result.match, variablesMap)
+            console.log result.color
 
             result.bufferRange = new Range(
               buffer.positionForCharacterIndex(result.range[0]),
@@ -147,18 +148,16 @@ class ColorParsing extends Mixin
   # range - An {Array} containing the character index of the start
   #         and end of the matching {String}
   @searchExpressionSync: (text, start=0) ->
-    ore = new OnigRegExp(@colorRegExp())
-    matches = ore.searchSync(text, start)
+    ore = new RegExp(@colorRegExp(), 'gi')
+    ore.lastIndex = start
+    if match = ore.exec(text)
+      matchText = match[0]
+      {lastIndex} = ore
 
-    return unless matches?
-
-    [match] = matches
-    matchText = match.match
-
-    {
-      match: matchText
-      range: [match.start, match.end]
-    }
+      {
+        match: matchText
+        range: [lastIndex - matchText.length, lastIndex]
+      }
 
 
   # Public: Searches for a {Color} in `text` asynchronously using
@@ -198,24 +197,21 @@ class ColorParsing extends Mixin
   #         and end of the matching {String}
   @searchExpression: (text, start=0, callback=->) ->
     defer = Q.defer()
-    ore = new OnigRegExp(@colorRegExp())
-    ore.search text, start, (err, matches) ->
-      return defer.reject(err) if err?
-
-      unless matches?
-        callback()
-        return defer.resolve()
-
-      [match] = matches
-
-      matchText = match.match
+    ore = new RegExp(@colorRegExp(), 'gi')
+    ore.lastIndex = start
+    if match = ore.exec text
+      matchText = match[0]
+      {lastIndex} = ore
 
       result = {
         match: matchText
-        range: [match.start, match.end]
+        range: [lastIndex - matchText.length, lastIndex]
       }
       callback result
       defer.resolve result
+    else
+      callback()
+      defer.reject()
 
     defer.promise
 

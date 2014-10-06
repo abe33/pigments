@@ -21,7 +21,6 @@ class ColorVariablesParsing extends Mixin
     throw new Error 'Missing buffer' unless buffer?
     Range = buffer.constructor.Range
 
-    defer = Q.defer()
     range = Range.fromObject(range)
 
     hasResults = false
@@ -37,7 +36,7 @@ class ColorVariablesParsing extends Mixin
       hasResults = true
       {lastIndex} = re
       break if lastIndex > bufferEnd
-      
+
       res = match[0]
       [key, value] = @extractVariableElements(res)
       start = buffer.positionForCharacterIndex(lastIndex - res.length)
@@ -48,17 +47,12 @@ class ColorVariablesParsing extends Mixin
       ]
       if @canHandle(value) or (results[value]? and results[value].isColor)
         results[key] = {value, range, isColor: true}
-        cb?(match)
+        callback?(match)
       else
         results[key] = {value, range, isColor: false}
-        cb?(match)
+        callback?(match)
 
-    if hasResults
-      defer.resolve(results)
-    else
-      defer.reject()
-
-    defer.promise
+    Q.fcall -> results
 
   @extractVariableElements: (string) ->
     for k,re of @variableExpressions
@@ -73,4 +67,4 @@ class ColorVariablesParsing extends Mixin
 
   @getVariableExpressionsRegexp: ->
     regex = (v for k,v of @variableExpressions).join('|')
-    new RegExp("(#{regex})", 'g')
+    new RegExp("(#{regex})", 'gm')
