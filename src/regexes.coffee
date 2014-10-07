@@ -16,3 +16,4 @@ module.exports =
   ps: '\\(\\s*'
   pe: '\\s*\\)'
   variables: variables
+  namePrefixes: '^| |:|=|,'

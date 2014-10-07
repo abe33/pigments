@@ -83,7 +83,7 @@ class ColorParsing extends Mixin
       if variables.length > 0
         paletteRegexp = '(' + variables.join('|') + ')(?!_|-|[ \\t]*[\\.:=])'
 
-        Color.addExpression 'variables', paletteRegexp, 1, (color, expr) =>
+        Color.addExpression 'variables', paletteRegexp, 1, (color, expr) ->
           color.rgba = new Color(variablesMap[expr].value, variablesMap).rgba
 
       results = []
@@ -93,6 +93,11 @@ class ColorParsing extends Mixin
 
           if matchEnd <= end
             result.color = new Color(result.match, variablesMap)
+            # HACK: Color expressions like named colors may match one
+            # character before the real color, but they ensure that the
+            # colorExpression doesn't contains it. By index the offset
+            # we end with the proper range in the buffer.
+            result.range[0] += result.match.indexOf(result.color.colorExpression)
 
             result.bufferRange = new Range(
               buffer.positionForCharacterIndex(result.range[0]),

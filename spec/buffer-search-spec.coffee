@@ -315,107 +315,112 @@ describe 'Color', ->
 
         done()
 
-    describe 'with a variable containing a dash', ->
-      beforeEach ->
-        @buffer = new TextBuffer text: """
-          $function-factor: -7%;
+  describe 'with a variable containing a dash', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: """
+        $function-factor: -7%;
 
-          $bg: scale-color(#fff, $lightness: $function-factor);
+        $bg: scale-color(#fff, $lightness: $function-factor);
 
-          $border-color: scale-color($bg, $lightness: $function-factor);
-        """
+        $border-color: scale-color($bg, $lightness: $function-factor);
+      """
 
-      it 'uses the other variables from the file', (done) ->
-        searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColors(@buffer, searchCallback)
+    it 'uses the other variables from the file', (done) ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
 
-        promise.then (results) ->
+      promise.then (results) ->
 
-          expect(results.length).toEqual(2)
+        expect(results.length).toEqual(2)
 
-          expect(results[0].match).toEqual('scale-color(#fff, $lightness: $function-factor)')
-          expect(results[1].match).toEqual('scale-color($bg, $lightness: $function-factor)')
-          done()
+        expect(results[0].match).toEqual('scale-color(#fff, $lightness: $function-factor)')
+        expect(results[1].match).toEqual('scale-color($bg, $lightness: $function-factor)')
+        done()
 
-    describe 'with a selector just after a color', ->
-      beforeEach ->
-        @buffer = new TextBuffer text: """
-        $color_grey_lighter: #efefef
+  describe 'with a selector just after a color', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: """
+      $color_grey_lighter: #efefef
 
-        .foo
-          .bar
-            border-left: 1px solid $color_grey_lighter
-            border-right: 1px solid $color_grey_lighter
-
-        .baz
+      .foo
+        .bar
+          border-left: 1px solid $color_grey_lighter
           border-right: 1px solid $color_grey_lighter
 
-        """
+      .baz
+        border-right: 1px solid $color_grey_lighter
 
-      it 'does not fail at finding the color preceding the selector', (done) ->
-        searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColors(@buffer, searchCallback)
+      """
 
-        promise.then (results) ->
-          expect(results.length).toEqual(4)
-          done()
+    it 'does not fail at finding the color preceding the selector', (done) ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
 
-    describe 'with a variable name containing a previous variable', ->
-      beforeEach ->
-        @buffer = new TextBuffer text: """
-        $color: #efefef
-        $color_blue: #efefef
-        """
+      promise.then (results) ->
+        expect(results.length).toEqual(4)
+        done()
 
-      it 'does not fail at ignoring matches', (done) ->
-        searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColors(@buffer, searchCallback)
+  describe 'with a variable name containing a previous variable', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: """
+      $color: #efefef
+      $color_blue: #efefef
+      """
 
-        promise.then (results) ->
-          expect(results.length).toEqual(2)
-          done()
+    it 'does not fail at ignoring matches', (done) ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
 
-    describe 'with a variable name containing a named color', ->
-      beforeEach ->
-        @buffer = new TextBuffer text: """
-        @blue
-        $green
-        """
+      promise.then (results) ->
+        expect(results.length).toEqual(2)
+        done()
 
-      it 'does not fail at ignoring matches', (done) ->
-        searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColors(@buffer, searchCallback)
+  describe 'with more than one aliased color variables', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: """
+      @one: #fff;
+      @two: @one;
+      @three: @two;
+      @four: @three;
+      """
 
-        promise.then (results) ->
-          expect(results.length).toEqual(0)
-          done()
+    it 'finds all the aliases as color variables', ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
 
+      promise.then (results) ->
+        expect(results.length).toEqual(4)
+        done()
 
-    describe 'with more than one aliased color variables', ->
-      beforeEach ->
-        @buffer = new TextBuffer text: """
-        @one: #fff;
-        @two: @one;
-        @three: @two;
-        @four: @three;
-        """
+  describe 'with ambiguous definition', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: fs.readFileSync(path.resolve __dirname, './fixtures/infinite_loop.coffee').toString()
 
-      it 'finds all the aliases as color variables', ->
-        searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColors(@buffer, searchCallback)
+    it 'does not find any color nor run into an infinite loop', ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
 
-        promise.then (results) ->
-          expect(results.length).toEqual(4)
-          done()
+      promise.then (results) ->
+        expect(results.length).toEqual(2)
+        done()
 
-    describe 'with ambiguous definition', ->
-      beforeEach ->
-        @buffer = new TextBuffer text: fs.readFileSync(path.resolve __dirname, './fixtures/infinite_loop.coffee').toString()
+  describe 'with a variable name containing a named color', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: """
+      .cyan
+      @blue
+      $green,yellow
 
-      it 'does not find any color nor run into an infinite loop', ->
-        searchCallback = jasmine.createSpy('searchCallback')
-        promise = Color.scanBufferForColors(@buffer, searchCallback)
+      border:cyan
+      some_color=green
+      background: darken(red, 20%)
+      """
 
-        promise.then (results) ->
-          expect(results.length).toEqual(2)
-          done()
+    it 'does not fail at ignoring matches', (done) ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+      promise.then (results) ->
+        expect(results.length).toEqual(4)
+        expect(results[0].range).toEqual([19,25])
+        done()

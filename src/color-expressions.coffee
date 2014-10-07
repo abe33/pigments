@@ -13,6 +13,7 @@ Color = require './color-model'
   ps
   pe
   variables
+  namePrefixes
 } = require './regexes'
 
 {
@@ -226,9 +227,9 @@ Color.addExpression 'gray', strip("
 # dodgerblue
 colors = Object.keys(Color.namedColors)
 
-colorRegexp = "\\b(#{colors.join('|')})(?!\\s*[-\\.:=])\\b"
+colorRegexp = "(#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=])\\b"
 
 Color.addExpression 'named_colors', colorRegexp, (color, expression) ->
-  [_,name] = @onigRegExp.exec(expression)
+  [_,_,name] = @onigRegExp.exec(expression)
 
-  color.name = name
+  color.colorExpression = color.name = name
