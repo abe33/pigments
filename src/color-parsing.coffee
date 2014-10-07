@@ -152,7 +152,7 @@ class ColorParsing extends Mixin
   # range - An {Array} containing the character index of the start
   #         and end of the matching {String}
   @searchExpressionSync: (text, start=0) ->
-    ore = new RegExp(@colorRegExp(), 'gi')
+    ore = new RegExp(@colorRegExp(), 'g')
     ore.lastIndex = start
     if match = ore.exec(text)
       matchText = match[0]
@@ -201,7 +201,7 @@ class ColorParsing extends Mixin
   #         and end of the matching {String}
   @searchExpression: (text, start=0, callback=->) ->
     defer = Q.defer()
-    ore = new RegExp(@colorRegExp(), 'gi')
+    ore = new RegExp(@colorRegExp(), 'g')
     ore.lastIndex = start
     if match = ore.exec text
       matchText = match[0]

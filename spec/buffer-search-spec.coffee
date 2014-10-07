@@ -404,7 +404,7 @@ describe 'Color', ->
         expect(results.length).toEqual(2)
         done()
 
-  describe 'with a variable name containing a named color', ->
+  describe 'with variable names containing a named color', ->
     beforeEach ->
       @buffer = new TextBuffer text: """
       .cyan
@@ -423,4 +423,28 @@ describe 'Color', ->
       promise.then (results) ->
         expect(results.length).toEqual(4)
         expect(results[0].range).toEqual([19,25])
+        done()
+
+  describe 'with various cases for colors', ->
+    beforeEach ->
+      @buffer = new TextBuffer text: """
+      CYAN
+      red
+      YellowGreen
+
+      color = blue
+
+      Color
+      """
+
+    it 'ignores different variable case', (done) ->
+      searchCallback = jasmine.createSpy('searchCallback')
+      promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+      promise
+      .then (results) ->
+        expect(results.length).toEqual(4)
+        done()
+      .fail (reason) ->
+        console.log reason.stack
         done()
