@@ -2,6 +2,7 @@ Mixin = require 'mixto'
 _ = require 'underscore-plus'
 Q = require 'q'
 
+{namePrefixes} = require './regexes'
 ColorExpression = require './color-expression'
 ColorOperation = require './color-operation'
 
@@ -81,10 +82,12 @@ class ColorParsing extends Mixin
       .map (s) -> _.escapeRegExp(s)
 
       if variables.length > 0
-        paletteRegexp = '(' + variables.join('|') + ')(?!_|-|[ \\t]*[\\.:=])'
+        paletteRegexpString = "(#{namePrefixes})(" + variables.join('|') + ')(?!_|-|\\d|[ \\t]*[\\.:=])'
+        paletteRegexp = new RegExp(paletteRegexpString)
 
-        Color.addExpression 'variables', paletteRegexp, 1, (color, expr) ->
-          color.rgba = new Color(variablesMap[expr].value, variablesMap).rgba
+        Color.addExpression 'variables', paletteRegexpString, 1, (color, expr) ->
+          [d,d,name] = paletteRegexp.exec(expr)
+          color.rgba = new Color(variablesMap[name].value, variablesMap).rgba
 
       results = []
       iterator = (result) =>
