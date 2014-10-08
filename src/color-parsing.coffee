@@ -11,6 +11,8 @@ ColorOperation = require './color-operation'
 # into {Color}s.
 module.exports =
 class ColorParsing extends Mixin
+  ASYNC_THRESHOLD = 40
+
   # The {Object} where color expression handlers are stored
   @colorExpressions: {}
 
@@ -91,6 +93,7 @@ class ColorParsing extends Mixin
           color.colorExpression = name
 
       results = []
+      startTime = new Date
       iterator = (result) =>
         if result?
           [matchStart, matchEnd] = result.range
@@ -110,7 +113,15 @@ class ColorParsing extends Mixin
             results.push result
             callback(result)
             start = matchEnd
-            @searchColor bufferText, start, iterator
+
+            time = new Date
+
+            if time - startTime < ASYNC_THRESHOLD
+              @searchColor bufferText, start, iterator
+            else
+              requestAnimationFrame =>
+                startTime = new Date
+                @searchColor bufferText, start, iterator
           else
             defer.resolve if results.length > 0 then results else undefined
             Color.removeExpression('variables')
