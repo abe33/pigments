@@ -1,3 +1,20 @@
+<a name="v3.0.0"></a>
+# v3.0.0 (2014-10-09)
+
+## :sparkles: Features
+
+- Implement async threshold ([36e41aef](https://github.com/abe33/pigments/commit/36e41aef93a6467be872940bfda6c65ded8ff9c1))  <br>It spans long executions over several frames by measuring the execution
+  time and request a new frame when going past the threshold.
+
+## :bug: Bug Fixes
+
+- Fix named colors in strings not matched ([ed455732](https://github.com/abe33/pigments/commit/ed455732419078d165db54217cd4632a0df18c53))
+- Fix invalid expression stored in color created from variable ([3b55cb3f](https://github.com/abe33/pigments/commit/3b55cb3f6ea72f802614d8c59447af467745adc5))
+- Fix missing pseudo lookbehind on color variables ([5cf1d81c](https://github.com/abe33/pigments/commit/5cf1d81cec656d1db796cbe8d651a8926919c476))
+- Fix issue with ignore case and variables/operations ([80171a90](https://github.com/abe33/pigments/commit/80171a903aa510e50a3baa18f61406c081d7d4ec))
+- Fix issue with named colors ([04a96030](https://github.com/abe33/pigments/commit/04a960309e2c3bd59d49735fe07f288f10a605a1))
+- Fix $color matched in $color_name ([48564258](https://github.com/abe33/pigments/commit/485642580f14d6c7be98c0815bd8b56fb459cd9d))
+
 <a name="v2.1.1"></a>
 # v2.1.1 (2014-09-18)
 
