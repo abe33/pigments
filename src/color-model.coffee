@@ -4,7 +4,6 @@ ColorConversions = require './color-conversions'
 ColorParsing = require './color-parsing'
 ColorVariablesParsing = require './color-variables-parsing'
 NamedColors = require './named-colors'
-{OnigRegExp} = require 'oniguruma'
 
 # Public: The {Color} class represent a RGBA color with its four components
 # `red`, `green`, `blue` and `alpha`. Internally the color components are
@@ -165,11 +164,11 @@ class Color
   # Public: A {Color} object can be created with any of the expressions it
   # supports. Each expression handler is tested against the expression and
   # the first to match is used.
-  constructor: (colorExpression=null, fileVariables={}) ->
+  constructor: (@colorExpression=null, fileVariables={}) ->
     [@red, @green, @blue, @alpha, @isInvalid] = [0, 0, 0, 1, false]
 
-    if colorExpression?
-      @parseExpression(colorExpression, fileVariables)
+    if @colorExpression?
+      @parseExpression(@colorExpression, fileVariables)
 
   # Public: Returns the luma value for the current color
   luma: ->

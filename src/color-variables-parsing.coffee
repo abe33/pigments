@@ -1,6 +1,5 @@
 Mixin = require 'mixto'
 Q = require 'q'
-{OnigRegExp} = require 'oniguruma'
 
 # Internal: The {ColorParsing} mixin provides instances and class methods
 # to register color expressions and operations and to parse these expressions
@@ -22,9 +21,9 @@ class ColorVariablesParsing extends Mixin
     throw new Error 'Missing buffer' unless buffer?
     Range = buffer.constructor.Range
 
-    defer = Q.defer()
     range = Range.fromObject(range)
 
+    hasResults = false
     bufferStart = buffer.characterIndexForPosition(range.start)
     bufferEnd = buffer.characterIndexForPosition(range.end)
     bufferText = buffer.getText()[bufferStart..bufferEnd]
@@ -32,44 +31,40 @@ class ColorVariablesParsing extends Mixin
 
     results = {}
 
-    searchOccurences = (str, cb, start=0) =>
-      re.search str, start, (err, match) =>
-        defer.reject(err) if err?
+    re.lastIndex = bufferStart
+    while match = re.exec bufferText
+      hasResults = true
+      {lastIndex} = re
+      break if lastIndex > bufferEnd
 
-        if match? and match[0].match isnt ''
-          [key, value] = @extractVariableElements(match[0].match, buffer)
-          start = buffer.positionForCharacterIndex(bufferStart + match[0].start)
-          end = buffer.positionForCharacterIndex(bufferStart + match[0].end)
-          range = [
-            [start.row, start.column]
-            [end.row, end.column]
-          ]
-          if @canHandle(value) or (results[value]? and results[value].isColor)
-            results[key] = {value, range, isColor: true}
-            cb?(match)
-          else
-            results[key] = {value, range, isColor: false}
-            cb?(match)
+      res = match[0]
+      [key, value] = @extractVariableElements(res)
+      start = buffer.positionForCharacterIndex(lastIndex - res.length)
+      end = buffer.positionForCharacterIndex(lastIndex)
+      range = [
+        [start.row, start.column]
+        [end.row, end.column]
+      ]
+      if @canHandle(value) or (results[value]? and results[value].isColor)
+        results[key] = {value, range, isColor: true}
+        callback?(match)
+      else
+        results[key] = {value, range, isColor: false}
+        callback?(match)
 
-          searchOccurences(str, cb, match[0].end)
-        else
-          defer.resolve(results)
-
-    searchOccurences bufferText, callback
-
-    defer.promise
+    Q.fcall -> results
 
   @extractVariableElements: (string) ->
     for k,re of @variableExpressions
-      ore = new OnigRegExp(re)
-      m = ore.searchSync(string)
+      ore = new RegExp(re)
+      m = ore.exec(string)
       if m?
         [_, key, value] = m
-        return [key.match, value.match]
+        return [key, value]
 
     null
 
 
   @getVariableExpressionsRegexp: ->
     regex = (v for k,v of @variableExpressions).join('|')
-    new OnigRegExp("(#{regex})")
+    new RegExp("(#{regex})", 'gm')

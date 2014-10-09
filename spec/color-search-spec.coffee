@@ -1,5 +1,3 @@
-{OnigRegExp} = require 'oniguruma'
-
 Color = require '../lib/color-model'
 
 {
@@ -30,123 +28,88 @@ describe 'Color', ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression 'bar, foo(#fff, 20%)', 0, searchCallback
 
-        waitsFor ->
-          searchCallback.callCount is 1
-
-        runs ->
-          result = searchCallback.argsForCall[0][0]
-          expect(result).toBeDefined()
-          done()
+        result = searchCallback.argsForCall[0][0]
+        expect(result).toBeDefined()
+        done()
 
     describe 'with no matches in the string', ->
       it 'calls back with null', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression 'bar', 0, searchCallback
 
-        waitsFor ->
-          searchCallback.callCount is 1
-
-        runs ->
-          result = searchCallback.argsForCall[0][0]
-          expect(result).toBeUndefined()
-          done()
+        result = searchCallback.argsForCall[0][0]
+        expect(result).toBeUndefined()
+        done()
 
     describe 'with a string looking like a color but is not', ->
       it 'calls back with null', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression '#addUser, #faddedUser', 0, searchCallback
 
-        waitsFor ->
-          searchCallback.callCount is 1
-
-        runs ->
-          result = searchCallback.argsForCall[0][0]
-          expect(result).toBeUndefined()
-          done()
+        result = searchCallback.argsForCall[0][0]
+        expect(result).toBeUndefined()
+        done()
 
     describe 'the returned promise', ->
       it 'yields the result', (done) ->
         promise = Color.searchExpression 'bar, foo(#fff, 20%)', 0
 
-        waitsFor -> not promise.isPending()
-
-        runs ->
-          promise.then (value) ->
-            expect(value).toBeDefined()
-            done()
+        promise.then (value) ->
+          expect(value).toBeDefined()
+          done()
 
     describe 'with a valid expression', ->
       it 'calls back with a result', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression 'bar, #fff, 20%', 0, searchCallback
 
-        waitsFor ->
-          searchCallback.callCount is 1
-
-        runs ->
-          result = searchCallback.argsForCall[0][0]
-          expect(result).toBeDefined()
-          done()
+        result = searchCallback.argsForCall[0][0]
+        expect(result).toBeDefined()
+        done()
 
     describe 'with no matches in the string', ->
       it 'calls back with null', (done) ->
         searchCallback = jasmine.createSpy('searchCallback')
         Color.searchExpression 'bar', 0, searchCallback
 
-        waitsFor ->
-          searchCallback.callCount is 1
-
-        runs ->
-          result = searchCallback.argsForCall[0][0]
-          expect(result).toBeUndefined()
-          done()
+        result = searchCallback.argsForCall[0][0]
+        expect(result).toBeUndefined()
+        done()
 
     describe 'the returned promise', ->
       it 'yields the result', (done) ->
         promise = Color.searchExpression 'bar, foo(#fff, 20%)', 0
 
-        waitsFor -> not promise.isPending()
-
-        runs ->
-          promise.then (value) ->
-            expect(value).toBeDefined()
-            done()
+        promise.then (value) ->
+          expect(value).toBeDefined()
+          done()
 
   describe 'searchColor', ->
     describe 'with a color in an operation', ->
       it 'yields the operation and not the color', (done) ->
         promise = Color.searchColor 'bar, foo(#fff, 20%)', 0
 
-        waitsFor -> not promise.isPending()
-
-        runs ->
-          promise.then (value) ->
-            expect(value).toBeDefined()
-            expect(value.match).toBe('foo(#fff, 20%)')
-            done()
+        promise.then (value) ->
+          expect(value).toBeDefined()
+          expect(value.match).toBe('foo(#fff, 20%)')
+          done()
 
     describe 'with only a color', ->
       it 'yields the the color', (done) ->
         promise = Color.searchColor 'bar, #fff, 20%', 0
 
-        waitsFor -> not promise.isPending()
-
-        runs ->
-          promise.then (value) ->
-            expect(value).toBeDefined()
-            expect(value.match).toBe('#fff')
-            done()
+        promise.then (value) ->
+          expect(value).toBeDefined()
+          expect(value.match).toBe('#fff')
+          done()
 
     describe 'with a color before an operation', ->
       it 'returns the color',  (done) ->
         promise = Color.searchColor 'bar, rgba(0,0,0,1), foo(red, 20%)', 3
-        waitsFor -> not promise.isPending()
-
-        runs ->
-          promise.then (value) ->
-            expect(value).toBeDefined()
-            expect(value.match).toEqual('rgba(0,0,0,1)')
-            done()
+        promise.then (value) ->
+          expect(value).toBeDefined()
+          expect(value.match).toEqual('rgba(0,0,0,1)')
+          done()
 
   describe '.searchExpressionSync', ->
     describe 'with a valid operation in the string', ->

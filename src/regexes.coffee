@@ -11,8 +11,9 @@ module.exports =
   intOrPercent: "(#{percent}|#{int})"
   floatOrPercent: "(#{percent}|#{float})"
   comma: '\\s*,\\s*'
-  notQuote: "[^\"'\n]*"
+  notQuote: "[^\"'\n]+"
   hexa: '[\\da-fA-F]'
   ps: '\\(\\s*'
   pe: '\\s*\\)'
   variables: variables
+  namePrefixes: '^| |:|=|,|\\n'
