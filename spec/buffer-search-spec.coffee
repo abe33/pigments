@@ -463,3 +463,26 @@ describe 'Color', ->
         .fail (reason) ->
           console.log reason.stack
           done()
+
+    describe 'with colors used inside other grammar form', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        $color_1: #ff0000
+        $color_2: #0000ff
+
+        $gradient: linear-gradient($color_1, $color_2)
+        $array: [$color_1, $color_2]
+        $hash: {$color_1, $color_2}
+        """
+
+      it 'highlights all the colors between parenthesis', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        promise
+        .then (results) ->
+          expect(results.length).toEqual(8)
+          done()
+        .fail (reason) ->
+          console.log reason.stack
+          done()
