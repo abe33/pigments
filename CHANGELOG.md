@@ -1,3 +1,17 @@
+<a name="v3.0.2"></a>
+# v3.0.2 (2014-11-25)
+
+## :bug: Bug Fixes
+
+- Fix color not matched after a (, [ or { ([0792489d](https://github.com/abe33/pigments/commit/0792489d9656be16695d3019eba936ad8aae0eba), [abe33/atom-color-highlight#56](https://github.com/abe33/atom-color-highlight/issues/56))
+
+<a name="v3.0.1"></a>
+# v3.0.1 (2014-10-15)
+
+## :bug: Bug Fixes
+
+- Fix invalid match of variable name in longer name ([f5e47cb7](https://github.com/abe33/pigments/commit/f5e47cb7d0e6cc99140a1b3673d4127d3e1e4865), [abe33/atom-color-highlight#50](https://github.com/abe33/atom-color-highlight/issues/50))
+
 <a name="v3.0.0"></a>
 # v3.0.0 (2014-10-09)
 
