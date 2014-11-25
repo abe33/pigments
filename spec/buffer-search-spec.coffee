@@ -440,6 +440,24 @@ describe 'Color', ->
           expect(results[0].range).toEqual([19,25])
           done()
 
+    describe 'with partial variable names in other variable names', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        @gray-darker: #111
+        @gray-dark: #222
+        @gray: #666
+        @gray-light: #999
+        @gray-lighter: #ccc
+        """
+
+      it 'does not fail at ignoring matches', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        promise.then (results) ->
+          expect(results.length).toEqual(5)
+          done()
+
     describe 'with various cases for colors', ->
       beforeEach ->
         @buffer = new TextBuffer text: """

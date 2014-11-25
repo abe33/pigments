@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <a name="v3.0.2"></a>
 # v3.0.2 (2014-11-25)
 
@@ -5,6 +6,8 @@
 
 - Fix color not matched after a (, [ or { ([0792489d](https://github.com/abe33/pigments/commit/0792489d9656be16695d3019eba936ad8aae0eba), [abe33/atom-color-highlight#56](https://github.com/abe33/atom-color-highlight/issues/56))
 
+=======
+>>>>>>> ac9f508c04071c989e5ea60c768c82a4b0b33eef
 <a name="v3.0.1"></a>
 # v3.0.1 (2014-10-15)
 

@@ -84,7 +84,7 @@ class ColorParsing extends Mixin
       .map (s) -> _.escapeRegExp(s)
 
       if variables.length > 0
-        paletteRegexpString = "(#{namePrefixes})(" + variables.join('|') + ')(?!_|-|\\d|[ \\t]*[\\.:=])'
+        paletteRegexpString = "(#{namePrefixes})(" + variables.join('|') + ')(?!_|-|\\w|\\d|[ \\t]*[\\.:=])'
         paletteRegexp = new RegExp(paletteRegexpString)
 
         Color.addExpression 'variables', paletteRegexpString, 1, (color, expr) ->
