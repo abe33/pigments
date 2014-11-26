@@ -1,3 +1,10 @@
+<a name="v3.0.4"></a>
+# v3.0.4 (2014-11-26)
+
+## :bug: Bug Fixes
+
+- Fix published code not in sync with sources.
+
 <a name="v3.0.2"></a>
 # v3.0.2 (2014-11-25)
 
