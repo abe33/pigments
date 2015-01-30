@@ -169,6 +169,12 @@ describe 'Color', ->
 
   itShouldParseTheColor('gray(100%)', 255, 255, 255)
   itShouldParseTheColor('gray(100%, 0.5)', 255, 255, 255, 0.5)
+  itShouldParseTheColorWithVariables('gray($c, $a)', {
+    '$c':
+      value: '100%'
+    '$a':
+      value: '0.5'
+  }, 255, 255, 255, 0.5)
 
   itShouldParseTheColor('cyan', 0, 255, 255)
 

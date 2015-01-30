@@ -236,14 +236,15 @@ Color.addExpression 'hwb', strip("
 # The priority is set to 1 to make sure that it appears before named colors
 Color.addExpression 'gray', strip("
   gray#{ps}\\s*
-    (#{percent})
-    (#{comma}(#{float}))?
-  #{pe}"), 1, (color, expression) ->
-  [_,p,_,a] = @onigRegExp.exec(expression)
+    (#{percent}|#{variables})
+    (#{comma}(#{float}|#{variables}))?
+  #{pe}"), 1, (color, expression, fileVariables) ->
 
-  p = parseFloat(p) / 100 * 255
+  [_,p,_,_,a] = @onigRegExp.exec(expression)
+
+  p = parseFloat(p, fileVariables) / 100 * 255
   color.rgb = [p, p, p]
-  color.alpha = if a? then parseFloat(a) else 1
+  color.alpha = if a? then parseFloat(a, fileVariables) else 1
 
 # dodgerblue
 colors = Object.keys(Color.namedColors)
