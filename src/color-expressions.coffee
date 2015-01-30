@@ -95,6 +95,21 @@ Color.addExpression 'css_rgba', strip("
   color.blue = parseIntOrPercent(b, fileVariables)
   color.alpha = parseFloat(a, fileVariables)
 
+# rgba(green,0.7)
+Color.addExpression 'stylus_rgba', strip("
+  rgba#{ps}\\s*
+    (#{notQuote})
+    #{comma}
+    (#{float}|#{variables})
+  #{pe}
+"), (color, expression, fileVariables) ->
+  [_,subexpr,a] = @onigRegExp.exec(expression)
+
+  subexpr = fileVariables[subexpr]?.value ? subexpr
+  baseColor = new Color(subexpr, fileVariables)
+  color.rgb = baseColor.rgb
+  color.alpha = parseFloat(a, fileVariables)
+
 # hsl(210,50%,50%)
 Color.addExpression 'css_hsl', strip("
   hsl#{ps}\\s*

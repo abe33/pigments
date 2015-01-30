@@ -59,6 +59,7 @@ describe 'Color', ->
   itShouldParseTheColor('rgb(255,127,0)', 255, 127, 0)
   itShouldParseTheColor('rgba(255,127,0,0.5)', 255, 127, 0, 0.5)
   itShouldParseTheColor('rgba(255,127,0,.5)', 255, 127, 0, 0.5)
+  itShouldParseTheColor('rgba(green, 0.5)', 0, 128, 0, 0.5)
 
   itShouldParseTheColorAsInvalid('rgb($r,$g,$b)')
   itShouldParseTheColorWithVariables('rgb($r,$g,$b)', {
@@ -80,6 +81,13 @@ describe 'Color', ->
     '$a':
       value: '0.5'
   }, 255, 127, 0, 0.5)
+
+  itShouldParseTheColorWithVariables('rgba($c,$a)', {
+    '$c':
+      value: 'green'
+    '$a':
+      value: '0.5'
+  }, 0, 128, 0, 0.5)
 
   itShouldntParseTheColor('rgba(255,127,0,)')
 
