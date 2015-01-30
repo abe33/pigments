@@ -26,6 +26,12 @@ Color = require './color-model'
   parseFloatOrPercent
 } = require './utils'
 
+# #6f3489ef
+Color.addExpression 'css_hexa_8', "#(#{hexa}{8})(?![\\d\\w])", (color, expression) ->
+  [_, hexa] = @onigRegExp.exec(expression)
+
+  color.hexARGB = hexa
+
 # #3489ef
 Color.addExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (color, expression) ->
   [_, hexa] = @onigRegExp.exec(expression)

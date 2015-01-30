@@ -49,6 +49,7 @@ itShouldntParseTheColor = (expr) ->
 
 describe 'Color', ->
 
+  itShouldParseTheColor('#7fff7f00', 255, 127, 0, 0.5)
   itShouldParseTheColor('#ff7f00', 255, 127, 0)
   itShouldParseTheColor('#f70', 255, 119, 0)
 
