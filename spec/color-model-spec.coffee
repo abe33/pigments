@@ -155,7 +155,7 @@ describe 'Color', ->
       value: '40%'
     '$b':
       value: '40%'
-  },102, 128, 153)
+  }, 102, 128, 153)
   itShouldParseTheColorWithVariables('hwb($h,$w,$b,$a)', {
     '$h':
       value: '210'
@@ -165,7 +165,7 @@ describe 'Color', ->
       value: '40%'
     '$a':
       value: '0.5'
-  },102, 128, 153, 0.5)
+  }, 102, 128, 153, 0.5)
 
   itShouldParseTheColor('gray(100%)', 255, 255, 255)
   itShouldParseTheColor('gray(100%, 0.5)', 255, 255, 255, 0.5)
