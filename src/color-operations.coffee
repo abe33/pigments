@@ -40,11 +40,9 @@ MAX_PER_COMPONENT =
 Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
   amount = parseFloat(amount, fileVariables)
-
   subexpr = fileVariables[subexpr]?.value ? subexpr
-  
+
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, fileVariables)
     [h,s,l] = baseColor.hsl
@@ -58,11 +56,11 @@ Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{var
 Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
   amount = parseFloat(amount, fileVariables)
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [h, s, clampInt(l + amount)]
@@ -76,11 +74,11 @@ Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{v
 Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
   [_, _, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
   amount = parseFloatOrPercent amount, fileVariables
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     color.rgb = baseColor.rgb
     color.alpha = clamp(baseColor.alpha - amount)
   else
@@ -92,12 +90,11 @@ Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})
 Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
   [_, _, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
-
   amount = parseFloatOrPercent amount, fileVariables
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     color.rgb = baseColor.rgb
     color.alpha = clamp(baseColor.alpha + amount)
   else
@@ -107,12 +104,11 @@ Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{fl
 Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
-
   amount = parseFloat amount, fileVariables
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [(h + amount) % 360, s, l]
@@ -134,9 +130,12 @@ Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}
     color2 = color2B
     amount = 0.5
 
+  color1 = fileVariables[color1]?.value ? color1
+  color2 = fileVariables[color2]?.value ? color2
+
   if Color.canHandle(color1) and Color.canHandle(color2) and not isNaN(amount)
-    baseColor1 = new Color(color1)
-    baseColor2 = new Color(color2)
+    baseColor1 = new Color(color1, fileVariables)
+    baseColor2 = new Color(color2, fileVariables)
 
     color.rgba = Color.mixColors(baseColor1, baseColor2, amount).rgba
   else
@@ -146,11 +145,11 @@ Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}
 Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
   amount = parseFloatOrPercent(amount, fileVariables)
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     white = new Color('white')
 
     color.rgba = Color.mixColors(white, baseColor, amount).rgba
@@ -161,11 +160,11 @@ Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{
 Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
   amount = parseFloatOrPercent(amount, fileVariables)
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     black = new Color('black')
 
     color.rgba = Color.mixColors(black, baseColor, amount).rgba
@@ -177,12 +176,11 @@ Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|
 Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
-
   amount = parseFloatOrPercent amount, fileVariables
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [h, clampInt(s - amount * 100), l]
@@ -195,9 +193,8 @@ Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatO
 Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr, amount] = @onigRegExp.exec(expression)
 
-  subexpr = subexpr
-
   amount = parseFloatOrPercent amount, fileVariables
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, fileVariables)
@@ -210,28 +207,34 @@ Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPer
 
 # grayscale(red)
 # greyscale(red)
-Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color, expression) ->
+Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color, expression, fileVariables) ->
   [_, _, subexpr] = @onigRegExp.exec(expression)
-  subexpr = subexpr
+
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [h, 0, l]
     color.alpha = baseColor.alpha
+  else
+    color.isInvalid = true
 
 # invert(green)
-Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression) ->
+Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression, fileVariables) ->
   [_, subexpr] = @onigRegExp.exec(expression)
-  subexpr = subexpr
+
+  subexpr = fileVariables[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr)
-    baseColor = new Color(subexpr)
+    baseColor = new Color(subexpr, fileVariables)
     [r,g,b] = baseColor.rgb
 
     color.rgb = [255 - r, 255 - g, 255 - b]
     color.alpha = baseColor.alpha
+  else
+    color.isInvalid = true
 
 # color(green tint(50%))
 Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color, expression) ->
@@ -255,6 +258,7 @@ Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 
   [_, subexpr] = @onigRegExp.exec(expression)
   [subject, params...] = split(subexpr)
 
+  subject = fileVariables[subject]?.value ? subject
   refColor = new Color(subject, fileVariables)
 
   for param in params
@@ -268,6 +272,8 @@ Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1,
 
   [_, subexpr] = @onigRegExp.exec(expression)
   [subject, params...] = split(subexpr)
+
+  subject = fileVariables[subject]?.value ? subject
   refColor = new Color(subject, fileVariables)
 
   for param in params
