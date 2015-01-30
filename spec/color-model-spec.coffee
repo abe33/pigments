@@ -182,7 +182,9 @@ describe 'Color', ->
   itShouldParseTheColor('darken(cyan, 20%)', 0, 153, 153)
   itShouldParseTheColor('darken(#fff, 100%)', 0, 0, 0)
   itShouldParseTheColorAsInvalid('darken(cyan, $r)')
-  itShouldParseTheColorWithVariables('darken(cyan, $r)', {
+  itShouldParseTheColorWithVariables('darken($c, $r)', {
+    '$c':
+      value: 'cyan'
     '$r':
       value: '20%'
   }, 0, 153, 153)

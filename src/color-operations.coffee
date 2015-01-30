@@ -43,6 +43,8 @@ Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{var
   subexpr = subexpr
   amount = parseFloat(amount, fileVariables)
 
+  subexpr = fileVariables[subexpr]?.value ? subexpr
+  
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, fileVariables)
     [h,s,l] = baseColor.hsl
