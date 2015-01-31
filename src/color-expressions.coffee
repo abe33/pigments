@@ -68,12 +68,12 @@ Color.addExpression 'css_rgb', strip("
     #{comma}
     (#{intOrPercent}|#{variables})
   #{pe}
-"), (color, expression, fileVariables) ->
+"), (color, expression, vars) ->
   [_,r,_,_,g,_,_,b] = @regExp.exec(expression)
 
-  color.red = parseIntOrPercent(r, fileVariables)
-  color.green = parseIntOrPercent(g, fileVariables)
-  color.blue = parseIntOrPercent(b, fileVariables)
+  color.red = parseIntOrPercent(r, vars)
+  color.green = parseIntOrPercent(g, vars)
+  color.blue = parseIntOrPercent(b, vars)
   color.alpha = 1
 
 # rgba(50,120,200,0.7)
@@ -87,13 +87,13 @@ Color.addExpression 'css_rgba', strip("
     #{comma}
     (#{float}|#{variables})
   #{pe}
-"), (color, expression, fileVariables) ->
+"), (color, expression, vars) ->
   [_,r,_,_,g,_,_,b,_,_,a] = @regExp.exec(expression)
 
-  color.red = parseIntOrPercent(r, fileVariables)
-  color.green = parseIntOrPercent(g, fileVariables)
-  color.blue = parseIntOrPercent(b, fileVariables)
-  color.alpha = parseFloat(a, fileVariables)
+  color.red = parseIntOrPercent(r, vars)
+  color.green = parseIntOrPercent(g, vars)
+  color.blue = parseIntOrPercent(b, vars)
+  color.alpha = parseFloat(a, vars)
 
 # rgba(green,0.7)
 Color.addExpression 'stylus_rgba', strip("
@@ -102,13 +102,13 @@ Color.addExpression 'stylus_rgba', strip("
     #{comma}
     (#{float}|#{variables})
   #{pe}
-"), (color, expression, fileVariables) ->
+"), (color, expression, vars) ->
   [_,subexpr,a] = @regExp.exec(expression)
 
-  subexpr = fileVariables[subexpr]?.value ? subexpr
-  baseColor = new Color(subexpr, fileVariables)
+  subexpr = vars[subexpr]?.value ? subexpr
+  baseColor = new Color(subexpr, vars)
   color.rgb = baseColor.rgb
-  color.alpha = parseFloat(a, fileVariables)
+  color.alpha = parseFloat(a, vars)
 
 # hsl(210,50%,50%)
 Color.addExpression 'css_hsl', strip("
@@ -119,13 +119,13 @@ Color.addExpression 'css_hsl', strip("
     #{comma}
     (#{percent}|#{variables})
   #{pe}
-"), (color, expression, fileVariables) ->
+"), (color, expression, vars) ->
   [_,h,_,s,_,l] = @regExp.exec(expression)
 
   color.hsl = [
-    parseInt(h, fileVariables)
-    parseFloat(s, fileVariables)
-    parseFloat(l, fileVariables)
+    parseInt(h, vars)
+    parseFloat(s, vars)
+    parseFloat(l, vars)
   ]
   color.alpha = 1
 
@@ -140,15 +140,15 @@ Color.addExpression 'css_hsla', strip("
     #{comma}
     (#{float}|#{variables})
   #{pe}
-"), (color, expression, fileVariables) ->
+"), (color, expression, vars) ->
   [_,h,_,s,_,l,_,a] = @regExp.exec(expression)
 
   color.hsl = [
-    parseInt(h,fileVariables)
-    parseFloat(s,fileVariables)
-    parseFloat(l,fileVariables)
+    parseInt(h,vars)
+    parseFloat(s,vars)
+    parseFloat(l,vars)
   ]
-  color.alpha = parseFloat(a,fileVariables)
+  color.alpha = parseFloat(a,vars)
 
 # hsv(210,70%,90%)
 Color.addExpression 'hsv', strip("
@@ -159,13 +159,13 @@ Color.addExpression 'hsv', strip("
     #{comma}
     (#{percent}|#{variables})
   #{pe}
-"), (color, expression, fileVariables) ->
+"), (color, expression, vars) ->
   [_,h,_,s,_,v] = @regExp.exec(expression)
 
   color.hsv = [
-    parseInt(h, fileVariables)
-    parseFloat(s, fileVariables)
-    parseFloat(v, fileVariables)
+    parseInt(h, vars)
+    parseFloat(s, vars)
+    parseFloat(v, vars)
   ]
   color.alpha = 1
 
@@ -180,15 +180,15 @@ Color.addExpression 'hsva', strip("
     #{comma}
     (#{float}|#{variables})
   #{pe}
-"), (color, expression, fileVariables) ->
+"), (color, expression, vars) ->
   [_,h,_,s,_,v,_,a] = @regExp.exec(expression)
 
   color.hsv = [
-    parseInt(h, fileVariables)
-    parseFloat(s, fileVariables)
-    parseFloat(v, fileVariables)
+    parseInt(h, vars)
+    parseFloat(s, vars)
+    parseFloat(v, vars)
   ]
-  color.alpha = parseFloat(a, fileVariables)
+  color.alpha = parseFloat(a, vars)
 
 
 # vec4(0.2, 0.5, 0.9, 0.7)
@@ -222,15 +222,15 @@ Color.addExpression 'hwb', strip("
     (#{percent}|#{variables})
     (#{comma}(#{float}|#{variables}))?
   #{pe}
-"), (color, expression, fileVariables) ->
+"), (color, expression, vars) ->
   [_,h,_,w,_,b,_,_,a] = @regExp.exec(expression)
 
   color.hwb = [
-    parseInt(h, fileVariables)
-    parseFloat(w, fileVariables)
-    parseFloat(b, fileVariables)
+    parseInt(h, vars)
+    parseFloat(w, vars)
+    parseFloat(b, vars)
   ]
-  color.alpha = if a? then parseFloat(a, fileVariables) else 1
+  color.alpha = if a? then parseFloat(a, vars) else 1
 
 # gray(50%)
 # The priority is set to 1 to make sure that it appears before named colors
@@ -238,13 +238,13 @@ Color.addExpression 'gray', strip("
   gray#{ps}\\s*
     (#{percent}|#{variables})
     (#{comma}(#{float}|#{variables}))?
-  #{pe}"), 1, (color, expression, fileVariables) ->
+  #{pe}"), 1, (color, expression, vars) ->
 
   [_,p,_,_,a] = @regExp.exec(expression)
 
-  p = parseFloat(p, fileVariables) / 100 * 255
+  p = parseFloat(p, vars) / 100 * 255
   color.rgb = [p, p, p]
-  color.alpha = if a? then parseFloat(a, fileVariables) else 1
+  color.alpha = if a? then parseFloat(a, vars) else 1
 
 # dodgerblue
 colors = Object.keys(Color.namedColors)

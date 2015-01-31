@@ -37,14 +37,14 @@ MAX_PER_COMPONENT =
   lightness: 100
 
 # darken(#666666, 20%)
-Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloat(amount, fileVariables)
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloat(amount, vars)
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [h, s, clampInt(l - amount)]
@@ -53,14 +53,14 @@ Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{var
     color.isInvalid = true
 
 # lighten(#666666, 20%)
-Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloat(amount, fileVariables)
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloat(amount, vars)
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [h, s, clampInt(l + amount)]
@@ -71,14 +71,14 @@ Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{v
 # transparentize(#ffffff, 0.5)
 # transparentize(#ffffff, 50%)
 # fadein(#ffffff, 0.5)
-Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, _, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent amount, fileVariables
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloatOrPercent amount, vars
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     color.rgb = baseColor.rgb
     color.alpha = clamp(baseColor.alpha - amount)
   else
@@ -87,28 +87,28 @@ Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})
 # opacify(0x78ffffff, 0.5)
 # opacify(0x78ffffff, 50%)
 # fadeout(0x78ffffff, 0.5)
-Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, _, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent amount, fileVariables
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloatOrPercent amount, vars
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     color.rgb = baseColor.rgb
     color.alpha = clamp(baseColor.alpha + amount)
   else
     color.isInvalid = true
 
 # adjust-hue(#855, 60deg)
-Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloat amount, fileVariables
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloat amount, vars
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [(h + amount) % 360, s, l]
@@ -118,38 +118,38 @@ Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}
 
 # mix(#f00, #00F, 25%)
 # mix(#f00, #00F)
-Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}(#{floatOrPercent}|#{variables})|(#{notQuote})#{comma}(#{notQuote}))#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}(#{floatOrPercent}|#{variables})|(#{notQuote})#{comma}(#{notQuote}))#{pe}", (color, expression, vars) ->
   [_, _, color1A, color2A, amount, _, _, color1B, color2B] = @regExp.exec(expression)
 
   if color1A?
     color1 = color1A
     color2 = color2A
-    amount = parseFloatOrPercent amount, fileVariables
+    amount = parseFloatOrPercent amount, vars
   else
     color1 = color1B
     color2 = color2B
     amount = 0.5
 
-  color1 = fileVariables[color1]?.value ? color1
-  color2 = fileVariables[color2]?.value ? color2
+  color1 = vars[color1]?.value ? color1
+  color2 = vars[color2]?.value ? color2
 
   if Color.canHandle(color1) and Color.canHandle(color2) and not isNaN(amount)
-    baseColor1 = new Color(color1, fileVariables)
-    baseColor2 = new Color(color2, fileVariables)
+    baseColor1 = new Color(color1, vars)
+    baseColor2 = new Color(color2, vars)
 
     color.rgba = Color.mixColors(baseColor1, baseColor2, amount).rgba
   else
     color.isInvalid = true
 
 # tint(red, 50%)
-Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent(amount, fileVariables)
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloatOrPercent(amount, vars)
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     white = new Color('white')
 
     color.rgba = Color.mixColors(white, baseColor, amount).rgba
@@ -157,14 +157,14 @@ Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{
     color.isInvalid = true
 
 # shade(red, 50%)
-Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent(amount, fileVariables)
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloatOrPercent(amount, vars)
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     black = new Color('black')
 
     color.rgba = Color.mixColors(black, baseColor, amount).rgba
@@ -173,14 +173,14 @@ Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|
 
 # desaturate(#855, 20%)
 # desaturate(#855, 0.2)
-Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent amount, fileVariables
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloatOrPercent amount, vars
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [h, clampInt(s - amount * 100), l]
@@ -190,14 +190,14 @@ Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatO
 
 # saturate(#855, 20%)
 # saturate(#855, 0.2)
-Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent amount, fileVariables
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  amount = parseFloatOrPercent amount, vars
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr) and not isNaN(amount)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [h, clampInt(s + amount * 100), l]
@@ -207,13 +207,13 @@ Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPer
 
 # grayscale(red)
 # greyscale(red)
-Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color, expression, vars) ->
   [_, _, subexpr] = @regExp.exec(expression)
 
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     [h,s,l] = baseColor.hsl
 
     color.hsl = [h, 0, l]
@@ -222,13 +222,13 @@ Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color,
     color.isInvalid = true
 
 # invert(green)
-Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression, fileVariables) ->
+Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression, vars) ->
   [_, subexpr] = @regExp.exec(expression)
 
-  subexpr = fileVariables[subexpr]?.value ? subexpr
+  subexpr = vars[subexpr]?.value ? subexpr
 
   if Color.canHandle(subexpr)
-    baseColor = new Color(subexpr, fileVariables)
+    baseColor = new Color(subexpr, vars)
     [r,g,b] = baseColor.rgb
 
     color.rgb = [255 - r, 255 - g, 255 - b]
@@ -244,40 +244,40 @@ Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color
   catch e
     color.isInvalid = true
 
-parseParam = (param, fileVariables={}, block) ->
-  [block, fileVariables] = [fileVariables, {}] if typeof fileVariables is 'function'
+parseParam = (param, vars={}, block) ->
+  [block, vars] = [vars, {}] if typeof vars is 'function'
   re = ///\$(\w+):\s*((-?#{float})|#{variables})///
   if re.test(param)
     [_, name, value] = re.exec(param)
-    value = fileVariables[value]?.value if ///#{variables}///.test(value)
+    value = vars[value]?.value if ///#{variables}///.test(value)
 
     block(name, value)
 
 # adjust-color(red, $lightness: 30%)
-Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
+Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, vars) ->
   [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
-  subject = fileVariables[subject]?.value ? subject
-  refColor = new Color(subject, fileVariables)
+  subject = vars[subject]?.value ? subject
+  refColor = new Color(subject, vars)
 
   for param in params
-    parseParam param, fileVariables, (name, value) ->
+    parseParam param, vars, (name, value) ->
       refColor[name] += parseFloat(value)
 
   color.rgba = refColor.rgba
 
 # scale-color(red, $lightness: 30%)
-Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
+Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, vars) ->
 
   [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
-  subject = fileVariables[subject]?.value ? subject
-  refColor = new Color(subject, fileVariables)
+  subject = vars[subject]?.value ? subject
+  refColor = new Color(subject, vars)
 
   for param in params
-    parseParam param, fileVariables, (name, value) ->
+    parseParam param, vars, (name, value) ->
       value = parseFloat(value) / 100
 
       result = if value > 0
@@ -291,14 +291,14 @@ Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1,
   color.rgba = refColor.rgba
 
 # change-color(red, $lightness: 30%)
-Color.addExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
+Color.addExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, vars) ->
   [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
-  refColor = new Color(subject, fileVariables)
+  refColor = new Color(subject, vars)
 
   for param in params
-    parseParam param, fileVariables, (name, value) ->
+    parseParam param, vars, (name, value) ->
       refColor[name] = parseFloat(value)
 
   color.rgba = refColor.rgba

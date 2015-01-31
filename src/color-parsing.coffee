@@ -238,8 +238,8 @@ class ColorParsing extends Mixin
   # accordingly.
   #
   # colorExpression - A {String} to parse
-  parseExpression: (colorExpression, fileVariables={}) ->
+  parseExpression: (colorExpression, vars={}) ->
     for expr in @constructor.sortedColorExpressions()
       if expr.canHandle(colorExpression)
-        expr.handle(this, colorExpression, fileVariables)
+        expr.handle(this, colorExpression, vars)
         return

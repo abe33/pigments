@@ -164,11 +164,11 @@ class Color
   # Public: A {Color} object can be created with any of the expressions it
   # supports. Each expression handler is tested against the expression and
   # the first to match is used.
-  constructor: (@colorExpression=null, fileVariables={}) ->
+  constructor: (@colorExpression=null, vars={}) ->
     [@red, @green, @blue, @alpha, @isInvalid] = [0, 0, 0, 1, false]
 
     if @colorExpression?
-      @parseExpression(@colorExpression, fileVariables)
+      @parseExpression(@colorExpression, vars)
 
   # Public: Returns the luma value for the current color
   luma: ->
