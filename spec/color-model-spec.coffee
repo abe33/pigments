@@ -186,11 +186,27 @@ describe 'Color', ->
     '$r':
       value: '20%'
   }, 0, 153, 153)
+  itShouldParseTheColorWithVariables('darken($a, $r)', {
+    '$a':
+      value: 'rgba($c, 1)'
+    '$c':
+      value: 'cyan'
+    '$r':
+      value: '20%'
+  }, 0, 153, 153)
 
   itShouldParseTheColor('lighten(cyan, 20%)', 102, 255, 255)
   itShouldParseTheColor('lighten(#000, 100%)', 255, 255, 255)
   itShouldParseTheColorAsInvalid('lighten(cyan, $r)')
   itShouldParseTheColorWithVariables('lighten($c, $r)', {
+    '$c':
+      value: 'cyan'
+    '$r':
+      value: '20%'
+  }, 102, 255, 255)
+  itShouldParseTheColorWithVariables('lighten($a, $r)', {
+    '$a':
+      value: 'rgba($c, 1)'
     '$c':
       value: 'cyan'
     '$r':
@@ -209,6 +225,15 @@ describe 'Color', ->
     '@r':
       value: '0.5'
   }, 0, 255, 255, 0.5)
+  itShouldParseTheColorWithVariables('fadein(@a, @r)', {
+    '@a':
+      value: 'rgba(@c, 1)'
+    '@c':
+      value: 'cyan'
+    '@r':
+      value: '0.5'
+  }, 0, 255, 255, 0.5)
+
 
   itShouldParseTheColor('opacify(0x7800FFFF, 50%)', 0, 255, 255, 1)
   itShouldParseTheColor('opacify(0x7800FFFF, 0.5)', 0, 255, 255, 1)
@@ -222,11 +247,27 @@ describe 'Color', ->
     '@r':
       value: '0.5'
   }, 0, 255, 255, 1)
+  itShouldParseTheColorWithVariables('fadeout(@a, @r)', {
+    '@a':
+      value: 'rgba(@c, 1)'
+    '@c':
+      value: '0x7800FFFF'
+    '@r':
+      value: '0.5'
+  }, 0, 255, 255, 1)
 
   itShouldParseTheColor('saturate(#855, 20%)', 158, 63, 63)
   itShouldParseTheColor('saturate(#855, 0.2)', 158, 63, 63)
   itShouldParseTheColorAsInvalid('saturate(#855, @r)')
   itShouldParseTheColorWithVariables('saturate(@c, @r)', {
+    '@c':
+      value: '#855'
+    '@r':
+      value: '0.2'
+  }, 158, 63, 63)
+  itShouldParseTheColorWithVariables('saturate(@a, @r)', {
+    '@a':
+      value: 'rgba(@c, 1)'
     '@c':
       value: '#855'
     '@r':
@@ -243,6 +284,15 @@ describe 'Color', ->
     '@r':
       value: '0.2'
   }, 136, 85, 85)
+  itShouldParseTheColorWithVariables('desaturate(@a, @r)', {
+    '@a':
+      value: 'rgba(@c, 1)'
+    '@c':
+      value: '#9e3f3f'
+    '@r':
+      value: '0.2'
+  }, 136, 85, 85)
+
 
   itShouldParseTheColor('grayscale(#9e3f3f)', 111, 111, 111)
   itShouldParseTheColor('greyscale(#9e3f3f)', 111, 111, 111)
@@ -251,10 +301,22 @@ describe 'Color', ->
     '@c':
       value: '#9e3f3f'
   }, 111, 111, 111)
+  itShouldParseTheColorWithVariables('grayscale(@a)', {
+    '@a':
+      value: 'rgba(@c, 1)'
+    '@c':
+      value: '#9e3f3f'
+  }, 111, 111, 111)
 
   itShouldParseTheColor('invert(#9e3f3f)', 97, 192, 192)
   itShouldParseTheColorAsInvalid('invert(@c)')
   itShouldParseTheColorWithVariables('invert(@c)', {
+    '@c':
+      value: '#9e3f3f'
+  }, 97, 192, 192)
+  itShouldParseTheColorWithVariables('invert(@a)', {
+    '@a':
+      value: 'rgba(@c, 1)'
     '@c':
       value: '#9e3f3f'
   }, 97, 192, 192)
@@ -270,6 +332,14 @@ describe 'Color', ->
     '$r':
       value: '-45deg'
   }, 136, 17, 106)
+  itShouldParseTheColorWithVariables('adjust-hue($a, $r)', {
+    '$a':
+      value: 'rgba($c, 0.5)'
+    '$c':
+      value: '#811'
+    '$r':
+      value: '-45deg'
+  }, 136, 17, 106, 0.5)
 
   itShouldParseTheColor('mix(#f00, #00f)', 127, 0, 127)
   itShouldParseTheColor('mix(#f00, #00f, 25%)', 63, 0, 191)
@@ -279,6 +349,18 @@ describe 'Color', ->
       value: '#f00'
     '$b':
       value: '#00f'
+    '$r':
+      value: '25%'
+  }, 63, 0, 191)
+  itShouldParseTheColorWithVariables('mix($c, $d, $r)', {
+    '$a':
+      value: '#f00'
+    '$b':
+      value: '#00f'
+    '$c':
+      value: 'rgba($a, 1)'
+    '$d':
+      value: 'rgba($b, 1)'
     '$r':
       value: '25%'
   }, 63, 0, 191)
@@ -330,6 +412,16 @@ describe 'Color', ->
     '$c':
       value: '#102030'
   }, 11, 32, 53)
+  itShouldParseTheColorWithVariables('adjust-color($d, $red: $a, $blue: $b)', {
+    '$a':
+      value: '-5'
+    '$b':
+      value: '5'
+    '$c':
+      value: '#102030'
+    '$d':
+      value: 'rgba($c, 1)'
+  }, 11, 32, 53)
 
   itShouldParseTheColor('scale-color(rgb(200, 150, 170), $green: -40%, $blue: 70%)', 200, 90, 230)
   itShouldParseTheColor('change-color(rgb(200, 150, 170), $green: 40, $blue: 70)', 200, 40, 70)
@@ -341,4 +433,14 @@ describe 'Color', ->
       value: '70%'
     '$c':
       value: 'rgb(200, 150, 170)'
+  }, 200, 90, 230)
+  itShouldParseTheColorWithVariables('scale-color($d, $green: $a, $blue: $b)', {
+    '$a':
+      value: '-40%'
+    '$b':
+      value: '70%'
+    '$c':
+      value: 'rgb(200, 150, 170)'
+    '$d':
+      value: 'rgba($c, 1)'
   }, 200, 90, 230)
