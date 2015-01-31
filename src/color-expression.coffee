@@ -1,7 +1,7 @@
 Q = require 'q'
 
 # Internal: The {ColorExpression} class represents a color {String}
-# representation. The expression is created using an {OnigRegExp} string
+# representation. The expression is created using an {RegExp} string
 # and a {Function} to handle matches.
 module.exports =
 class ColorExpression
@@ -14,7 +14,7 @@ class ColorExpression
   # priority - A {Number} to priorize an expression over others. The greater
   #            the value, the sooner it will be evaluated.
   constructor: (@name, @regexp, @handle, @priority=0) ->
-    @onigRegExp = new RegExp("^#{@regexp}$", 'i')
+    @regExp = new RegExp("^#{@regexp}$", 'i')
 
   # Public: Returns `true` if the current {ColorExpression} can handle
   # the passed-in expression {String}.
@@ -23,7 +23,7 @@ class ColorExpression
   #
   # Returns `true` if the current {ColorExpression} can handle
   # the passed-in expression.
-  canHandle: (expression) -> @onigRegExp.test expression
+  canHandle: (expression) -> @regExp.test expression
 
   # Public: Performs a synchronous search for this expression into the
   # passed-in `text` {String}.

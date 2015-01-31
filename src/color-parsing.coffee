@@ -21,7 +21,7 @@ class ColorParsing extends Mixin
   # arguments.
   #
   # name - A {String} to identify the expression
-  # regexp - An {OnigRegExp} {String} that matches the color notation. The
+  # regexp - A {RegExp} {String} that matches the color notation. The
   #          expression can capture groups that will be used later in the
   #          color parsing phase
   # handle - A {Function} that takes a {Color} to modify and the {String}

@@ -38,7 +38,7 @@ MAX_PER_COMPONENT =
 
 # darken(#666666, 20%)
 Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloat(amount, fileVariables)
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -54,7 +54,7 @@ Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{var
 
 # lighten(#666666, 20%)
 Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloat(amount, fileVariables)
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -72,7 +72,7 @@ Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{v
 # transparentize(#ffffff, 50%)
 # fadein(#ffffff, 0.5)
 Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, _, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, _, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloatOrPercent amount, fileVariables
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -88,7 +88,7 @@ Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})
 # opacify(0x78ffffff, 50%)
 # fadeout(0x78ffffff, 0.5)
 Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, _, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, _, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloatOrPercent amount, fileVariables
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -102,7 +102,7 @@ Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{fl
 
 # adjust-hue(#855, 60deg)
 Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloat amount, fileVariables
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -119,7 +119,7 @@ Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}
 # mix(#f00, #00F, 25%)
 # mix(#f00, #00F)
 Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}(#{floatOrPercent}|#{variables})|(#{notQuote})#{comma}(#{notQuote}))#{pe}", (color, expression, fileVariables) ->
-  [_, _, color1A, color2A, amount, _, _, color1B, color2B] = @onigRegExp.exec(expression)
+  [_, _, color1A, color2A, amount, _, _, color1B, color2B] = @regExp.exec(expression)
 
   if color1A?
     color1 = color1A
@@ -143,7 +143,7 @@ Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}
 
 # tint(red, 50%)
 Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloatOrPercent(amount, fileVariables)
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -158,7 +158,7 @@ Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{
 
 # shade(red, 50%)
 Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloatOrPercent(amount, fileVariables)
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -174,7 +174,7 @@ Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|
 # desaturate(#855, 20%)
 # desaturate(#855, 0.2)
 Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloatOrPercent amount, fileVariables
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -191,7 +191,7 @@ Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatO
 # saturate(#855, 20%)
 # saturate(#855, 0.2)
 Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr, amount] = @onigRegExp.exec(expression)
+  [_, subexpr, amount] = @regExp.exec(expression)
 
   amount = parseFloatOrPercent amount, fileVariables
   subexpr = fileVariables[subexpr]?.value ? subexpr
@@ -208,7 +208,7 @@ Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPer
 # grayscale(red)
 # greyscale(red)
 Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color, expression, fileVariables) ->
-  [_, _, subexpr] = @onigRegExp.exec(expression)
+  [_, _, subexpr] = @regExp.exec(expression)
 
   subexpr = fileVariables[subexpr]?.value ? subexpr
 
@@ -223,7 +223,7 @@ Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color,
 
 # invert(green)
 Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression, fileVariables) ->
-  [_, subexpr] = @onigRegExp.exec(expression)
+  [_, subexpr] = @regExp.exec(expression)
 
   subexpr = fileVariables[subexpr]?.value ? subexpr
 
@@ -255,7 +255,7 @@ parseParam = (param, fileVariables={}, block) ->
 
 # adjust-color(red, $lightness: 30%)
 Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
-  [_, subexpr] = @onigRegExp.exec(expression)
+  [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
   subject = fileVariables[subject]?.value ? subject
@@ -270,7 +270,7 @@ Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 
 # scale-color(red, $lightness: 30%)
 Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
 
-  [_, subexpr] = @onigRegExp.exec(expression)
+  [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
   subject = fileVariables[subject]?.value ? subject
@@ -292,7 +292,7 @@ Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1,
 
 # change-color(red, $lightness: 30%)
 Color.addExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, fileVariables) ->
-  [_, subexpr] = @onigRegExp.exec(expression)
+  [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
   refColor = new Color(subject, fileVariables)

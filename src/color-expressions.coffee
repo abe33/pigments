@@ -28,19 +28,19 @@ Color = require './color-model'
 
 # #6f3489ef
 Color.addExpression 'css_hexa_8', "#(#{hexa}{8})(?![\\d\\w])", (color, expression) ->
-  [_, hexa] = @onigRegExp.exec(expression)
+  [_, hexa] = @regExp.exec(expression)
 
   color.hexARGB = hexa
 
 # #3489ef
 Color.addExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (color, expression) ->
-  [_, hexa] = @onigRegExp.exec(expression)
+  [_, hexa] = @regExp.exec(expression)
 
   color.hex = hexa
 
 # #38e
 Color.addExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (color, expression) ->
-  [_, hexa] = @onigRegExp.exec(expression)
+  [_, hexa] = @regExp.exec(expression)
   colorAsInt = parseInt(hexa, 16)
 
   color.red = (colorAsInt >> 8 & 0xf) * 17
@@ -49,13 +49,13 @@ Color.addExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (color, expressio
 
 # 0xab3489ef
 Color.addExpression 'int_hexa_8', "0x(#{hexa}{8})(?!#{hexa})", (color, expression) ->
-  [_, hexa] = @onigRegExp.exec(expression)
+  [_, hexa] = @regExp.exec(expression)
 
   color.hexARGB = hexa
 
 # 0x3489ef
 Color.addExpression 'int_hexa_6', "0x(#{hexa}{6})(?!#{hexa})", (color, expression) ->
-  [_, hexa] = @onigRegExp.exec(expression)
+  [_, hexa] = @regExp.exec(expression)
 
   color.hex = hexa
 
@@ -69,7 +69,7 @@ Color.addExpression 'css_rgb', strip("
     (#{intOrPercent}|#{variables})
   #{pe}
 "), (color, expression, fileVariables) ->
-  [_,r,_,_,g,_,_,b] = @onigRegExp.exec(expression)
+  [_,r,_,_,g,_,_,b] = @regExp.exec(expression)
 
   color.red = parseIntOrPercent(r, fileVariables)
   color.green = parseIntOrPercent(g, fileVariables)
@@ -88,7 +88,7 @@ Color.addExpression 'css_rgba', strip("
     (#{float}|#{variables})
   #{pe}
 "), (color, expression, fileVariables) ->
-  [_,r,_,_,g,_,_,b,_,_,a] = @onigRegExp.exec(expression)
+  [_,r,_,_,g,_,_,b,_,_,a] = @regExp.exec(expression)
 
   color.red = parseIntOrPercent(r, fileVariables)
   color.green = parseIntOrPercent(g, fileVariables)
@@ -103,7 +103,7 @@ Color.addExpression 'stylus_rgba', strip("
     (#{float}|#{variables})
   #{pe}
 "), (color, expression, fileVariables) ->
-  [_,subexpr,a] = @onigRegExp.exec(expression)
+  [_,subexpr,a] = @regExp.exec(expression)
 
   subexpr = fileVariables[subexpr]?.value ? subexpr
   baseColor = new Color(subexpr, fileVariables)
@@ -120,7 +120,7 @@ Color.addExpression 'css_hsl', strip("
     (#{percent}|#{variables})
   #{pe}
 "), (color, expression, fileVariables) ->
-  [_,h,_,s,_,l] = @onigRegExp.exec(expression)
+  [_,h,_,s,_,l] = @regExp.exec(expression)
 
   color.hsl = [
     parseInt(h, fileVariables)
@@ -141,7 +141,7 @@ Color.addExpression 'css_hsla', strip("
     (#{float}|#{variables})
   #{pe}
 "), (color, expression, fileVariables) ->
-  [_,h,_,s,_,l,_,a] = @onigRegExp.exec(expression)
+  [_,h,_,s,_,l,_,a] = @regExp.exec(expression)
 
   color.hsl = [
     parseInt(h,fileVariables)
@@ -160,7 +160,7 @@ Color.addExpression 'hsv', strip("
     (#{percent}|#{variables})
   #{pe}
 "), (color, expression, fileVariables) ->
-  [_,h,_,s,_,v] = @onigRegExp.exec(expression)
+  [_,h,_,s,_,v] = @regExp.exec(expression)
 
   color.hsv = [
     parseInt(h, fileVariables)
@@ -181,7 +181,7 @@ Color.addExpression 'hsva', strip("
     (#{float}|#{variables})
   #{pe}
 "), (color, expression, fileVariables) ->
-  [_,h,_,s,_,v,_,a] = @onigRegExp.exec(expression)
+  [_,h,_,s,_,v,_,a] = @regExp.exec(expression)
 
   color.hsv = [
     parseInt(h, fileVariables)
@@ -203,7 +203,7 @@ Color.addExpression 'vec4', strip("
     (#{float})
   #{pe}
 "), (color, expression) ->
-  [_,h,s,l,a] = @onigRegExp.exec(expression)
+  [_,h,s,l,a] = @regExp.exec(expression)
 
   color.rgba = [
     parseFloat(h) * 255
@@ -223,7 +223,7 @@ Color.addExpression 'hwb', strip("
     (#{comma}(#{float}|#{variables}))?
   #{pe}
 "), (color, expression, fileVariables) ->
-  [_,h,_,w,_,b,_,_,a] = @onigRegExp.exec(expression)
+  [_,h,_,w,_,b,_,_,a] = @regExp.exec(expression)
 
   color.hwb = [
     parseInt(h, fileVariables)
@@ -240,7 +240,7 @@ Color.addExpression 'gray', strip("
     (#{comma}(#{float}|#{variables}))?
   #{pe}"), 1, (color, expression, fileVariables) ->
 
-  [_,p,_,_,a] = @onigRegExp.exec(expression)
+  [_,p,_,_,a] = @regExp.exec(expression)
 
   p = parseFloat(p, fileVariables) / 100 * 255
   color.rgb = [p, p, p]
@@ -252,6 +252,6 @@ colors = Object.keys(Color.namedColors)
 colorRegexp = "(#{namePrefixes})(#{colors.join('|')})(?!\\s*[-\\.:=\\(])\\b"
 
 Color.addExpression 'named_colors', colorRegexp, (color, expression) ->
-  [_,_,name] = @onigRegExp.exec(expression)
+  [_,_,name] = @regExp.exec(expression)
 
   color.colorExpression = color.name = name
