@@ -45,10 +45,10 @@ class Color
 
   # A two dimensional {Array} storing the name of a component with its index.
   @colorComponents: [
-    [ 'red',   0 ]
-    [ 'green', 1 ]
-    [ 'blue',  2 ]
-    [ 'alpha', 3 ]
+    ['red',   0]
+    ['green', 1]
+    ['blue',  2]
+    ['alpha', 3]
   ]
 
   # Public: The `red`, `green`, `blue` and `alpha` components accessors.
