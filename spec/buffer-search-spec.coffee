@@ -259,7 +259,7 @@ describe 'Color', ->
 
           light-red_var= lighten(red, 10%);
 
-          not_a_color = 10px
+          $not_a_color = 10px
           """
           filePath: 'some_path.styl'
         }
@@ -278,9 +278,9 @@ describe 'Color', ->
               value: 'lighten(red, 10%)'
               range: [[2,0], [2,33]]
               isColor: true
-            'not_a_color':
+            '$not_a_color':
               value: '10px'
-              range: [[4,0],[4,18 ]]
+              range: [[4,0],[4,19]]
               isColor: false
           })
           done()
