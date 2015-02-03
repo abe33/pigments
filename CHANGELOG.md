@@ -1,3 +1,19 @@
+<a name="v3.1.0"></a>
+# v3.1.0 (2015-02-03)
+
+## :sparkles: Features
+
+- Add support for color variables in all remaining operations ([fa96e4ba](https://github.com/abe33/pigments/commit/fa96e4ba78e81a2ae659ea535f43c8a985567e9b))
+- Add support for variables as color in darken ([d13a6f4c](https://github.com/abe33/pigments/commit/d13a6f4c6e4ea9151da03000f595c7a624b0ece7))
+- Add support for variables in gray() definition ([8328553d](https://github.com/abe33/pigments/commit/8328553d575841f2112b47f1869fc34b97b62ae5))
+- Add support for rgba(color, alpha) signature ([c883351d](https://github.com/abe33/pigments/commit/c883351dfd5e2c8b6dc687846e0192631f2a2114))
+- Add #AARRGGBB color support ([2004c9db](https://github.com/abe33/pigments/commit/2004c9dbd3f45ac4de622a40ad4c1b93f058a086), [abe33/atom-color-highlight#74](https://github.com/abe33/atom-color-highlight/issues/74))
+
+## :bug: Bug Fixes
+
+- Fix variables with !default not parsed properly ([20ff9b37](https://github.com/abe33/pigments/commit/20ff9b373cded1d90a16d423073173d0b3a787de), [abe33/atom-project-palette-finder#23](https://github.com/abe33/atom-project-palette-finder/issues/23))
+- Fix stylus variable starting with $ not parsed ([3612240b](https://github.com/abe33/pigments/commit/3612240b7bb549387cb085f6a08e93671696ea50), [abe33/atom-project-palette-finder#19](https://github.com/abe33/atom-project-palette-finder/issues/19))
+
 <a name="v3.0.4"></a>
 # v3.0.4 (2014-11-26)
 
