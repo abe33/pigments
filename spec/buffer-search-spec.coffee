@@ -226,6 +226,8 @@ describe 'Color', ->
           $light-red_var: lighten($red, 10%);
 
           $not_a_color: 10px;
+
+          $color__action--primary: #515761 !default;
           """
           filePath: 'some_path.scss'
         }
@@ -233,7 +235,7 @@ describe 'Color', ->
         searchCallback = jasmine.createSpy('searchCallback')
         promise = Color.scanBufferForVariables(@buffer, searchCallback)
 
-        expect(searchCallback.callCount).toEqual(3)
+        expect(searchCallback.callCount).toEqual(4)
         promise.then (results) ->
           expect(results).toEqual({
             '$red':
@@ -248,6 +250,10 @@ describe 'Color', ->
               value: '10px'
               range: [[4,0],[4,19]]
               isColor: false
+            '$color__action--primary':
+              value: '#515761'
+              range: [[6,0],[6,42]]
+              isColor: true
           })
           done()
 
