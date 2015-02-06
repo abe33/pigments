@@ -510,3 +510,28 @@ describe 'Color', ->
         .fail (reason) ->
           console.log reason.stack
           done()
+
+    describe 'with a rgba(var, alpha) declaration', ->
+      beforeEach ->
+        @buffer = new TextBuffer text: """
+        .information
+          background rgba(color_base05, 0.93)
+          transform translate(0, 0)
+          color #000000
+
+          .status, .name
+            transform translate(0, 0)
+
+        """
+
+      it 'ignores different variable case', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForColors(@buffer, searchCallback)
+
+        promise
+        .then (results) ->
+          expect(results.length).toEqual(2)
+          done()
+        .fail (reason) ->
+          console.log reason.stack
+          done()
