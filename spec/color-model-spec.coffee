@@ -83,6 +83,7 @@ describe 'Color', ->
 
   itShouldParseTheColor('rgba(green, 0.5)', 0, 128, 0, 0.5)
   itShouldParseTheColorAsInvalid('rgba($c,$a)')
+  itShouldParseTheColorAsInvalid('rgba($c,1)')
   itShouldParseTheColorWithVariables('rgba($c,$a)', {
     '$c':
       value: 'green'

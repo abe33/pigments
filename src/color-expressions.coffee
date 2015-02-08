@@ -106,9 +106,13 @@ Color.addExpression 'stylus_rgba', strip("
   [_,subexpr,a] = @regExp.exec(expression)
 
   subexpr = vars[subexpr]?.value ? subexpr
-  baseColor = new Color(subexpr, vars)
-  color.rgb = baseColor.rgb
-  color.alpha = parseFloat(a, vars)
+
+  if Color.canHandle(subexpr)
+    baseColor = new Color(subexpr, vars)
+    color.rgb = baseColor.rgb
+    color.alpha = parseFloat(a, vars)
+  else
+    color.isInvalid = true
 
 # hsl(210,50%,50%)
 Color.addExpression 'css_hsl', strip("
