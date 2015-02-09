@@ -291,6 +291,62 @@ describe 'Color', ->
           })
           done()
 
+    describe 'with a buffer containing a stylus hash with colors', ->
+      beforeEach ->
+        @buffer = new TextBuffer {
+          text: """
+          colors = {
+            red: #FF3300,
+            green: #66CC00,
+            blue: #3399CC
+            value: 10px
+          }
+
+          themes = {
+            light: {
+              base: #efefef
+            }
+            dark: {
+              base: #333
+            }
+          }
+          """
+          filePath: 'some_path.styl'
+        }
+      it 'finds the variables and makes them available', (done) ->
+        searchCallback = jasmine.createSpy('searchCallback')
+        promise = Color.scanBufferForVariables(@buffer, searchCallback)
+
+        expect(searchCallback.callCount).toEqual(6)
+        promise.then (results) ->
+          expect(results).toEqual({
+            'colors.red':
+              value: '#FF3300'
+              range: [[1,2], [1,14]]
+              isColor: true
+            'colors.green':
+              value: '#66CC00'
+              range: [[2,2], [2,16]]
+              isColor: true
+            'colors.blue':
+              value: '#3399CC'
+              range: [[3,2],[3,15]]
+              isColor: true
+            'colors.value':
+              value: '10px'
+              range: [[4,2],[4,13]]
+              isColor: false
+            'themes.light.base':
+              value: '#efefef'
+              range: [[9,4],[9,17]]
+              isColor: true
+            'themes.dark.base':
+              value: '#333'
+              range: [[12,4],[12,14]]
+              isColor: true
+          })
+          done()
+
     describe 'with a buffer where expressions relies on non-color variables', ->
       beforeEach ->
         @buffer = new TextBuffer text: """
