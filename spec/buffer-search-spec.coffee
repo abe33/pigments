@@ -310,6 +310,10 @@ describe 'Color', ->
               base: #333
             }
           }
+
+          body {
+            color: colors.red;
+          }
           """
           filePath: 'some_path.styl'
         }

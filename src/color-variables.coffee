@@ -19,7 +19,7 @@ Color.addVariableExpression 'stylus_hash', '([a-zA-Z_$][a-zA-Z0-9\\-_]*)\\s*=\\s
       buffer = ''
     else if /\}/.test(char)
       scope.pop()
-      return current if scope.length is 0
+      return start + current if scope.length is 0
     else if /[,\n]/.test(char)
       buffer = strip(buffer)
       if buffer.length
