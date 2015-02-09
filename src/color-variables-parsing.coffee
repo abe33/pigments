@@ -71,7 +71,6 @@ class ColorVariablesParsing extends Mixin
           solver.appendResult([key, value, startIndex, lastIndex])
           return lastIndex
 
-
   @getVariableExpressionsRegexp: ->
     regex = (v.regexp for k,v of @variableExpressions).join('|')
     new RegExp("(#{regex})", 'gm')

@@ -1,3 +1,14 @@
+<a name="v3.2.0"></a>
+# v3.2.0 (2015-02-09)
+
+## :sparkles: Features
+
+- Implement stylus hash support ([d37baa8b](https://github.com/abe33/pigments/commit/d37baa8b4ab64b98f8d4192c5d482fd72fa788c1))
+
+## :bug: Bug Fixes
+
+- Fix rgba(var, alpha) expression not marked as invalid ([a2f70f96](https://github.com/abe33/pigments/commit/a2f70f964eccf2d6aca0f8031f8d6b431a2a89f4))
+
 <a name="v3.1.0"></a>
 # v3.1.0 (2015-02-03)
 
