@@ -20,11 +20,11 @@ cssColor = require 'css-color-function'
   split
   clamp
   clampInt
-  parseInt
-  parseFloat
-  parseIntOrPercent
-  parseFloatOrPercent
-  parseDegreesOrPercent
+  readInt
+  readFloat
+  readIntOrPercent
+  readFloatOrPercent
+  readDegreesOrPercent
 } = require './utils'
 
 MAX_PER_COMPONENT =
@@ -40,8 +40,11 @@ MAX_PER_COMPONENT =
 Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloat(amount, vars)
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloat(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
@@ -49,6 +52,7 @@ Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{var
 
     color.hsl = [h, s, clampInt(l - amount)]
     color.alpha = baseColor.alpha
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -56,8 +60,11 @@ Color.addExpression 'darken', "darken#{ps}(#{notQuote})#{comma}(#{percent}|#{var
 Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloat(amount, vars)
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloat(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
@@ -65,6 +72,7 @@ Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{v
 
     color.hsl = [h, s, clampInt(l + amount)]
     color.alpha = baseColor.alpha
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -74,13 +82,17 @@ Color.addExpression 'lighten', "lighten#{ps}(#{notQuote})#{comma}(#{percent}|#{v
 Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, _, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent amount, vars
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloatOrPercent(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
     color.rgb = baseColor.rgb
     color.alpha = clamp(baseColor.alpha - amount)
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -90,13 +102,17 @@ Color.addExpression 'transparentize', "(transparentize|fadein)#{ps}(#{notQuote})
 Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, _, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent amount, vars
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloatOrPercent(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
     color.rgb = baseColor.rgb
     color.alpha = clamp(baseColor.alpha + amount)
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -104,8 +120,11 @@ Color.addExpression 'opacify', "(opacify|fadeout)#{ps}(#{notQuote})#{comma}(#{fl
 Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}deg|#{variables}|-?#{percent})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloat amount, vars
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloat(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
@@ -113,6 +132,7 @@ Color.addExpression 'adjust-hue', "adjust-hue#{ps}(#{notQuote})#{comma}(-?#{int}
 
     color.hsl = [(h + amount) % 360, s, l]
     color.alpha = baseColor.alpha
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -124,20 +144,28 @@ Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}
   if color1A?
     color1 = color1A
     color2 = color2A
-    amount = parseFloatOrPercent amount, vars
+    amount = readFloatOrPercent(amount, vars, color)
   else
     color1 = color1B
     color2 = color2B
     amount = 0.5
 
-  color1 = vars[color1]?.value ? color1
-  color2 = vars[color2]?.value ? color2
+  if vars[color1]?
+    color.usedVariables.push(color1)
+    color1 = vars[color1].value
+
+  if vars[color2]?
+    color.usedVariables.push(color2)
+    color2 = vars[color2].value
 
   if Color.canHandle(color1) and Color.canHandle(color2) and not isNaN(amount)
     baseColor1 = new Color(color1, vars)
     baseColor2 = new Color(color2, vars)
 
     color.rgba = Color.mixColors(baseColor1, baseColor2, amount).rgba
+
+    color.usedVariables = color.usedVariables.concat(baseColor1.usedVariables)
+    color.usedVariables = color.usedVariables.concat(baseColor2.usedVariables)
   else
     color.isInvalid = true
 
@@ -145,14 +173,18 @@ Color.addExpression 'mix', "mix#{ps}((#{notQuote})#{comma} (#{notQuote})#{comma}
 Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent(amount, vars)
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloatOrPercent(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
     white = new Color('white')
 
     color.rgba = Color.mixColors(white, baseColor, amount).rgba
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -160,14 +192,18 @@ Color.addExpression 'tint', "tint#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{
 Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent(amount, vars)
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloatOrPercent(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
     black = new Color('black')
 
     color.rgba = Color.mixColors(black, baseColor, amount).rgba
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -176,8 +212,11 @@ Color.addExpression 'shade', "shade#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|
 Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent amount, vars
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloatOrPercent(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
@@ -185,6 +224,7 @@ Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatO
 
     color.hsl = [h, clampInt(s - amount * 100), l]
     color.alpha = baseColor.alpha
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -193,8 +233,11 @@ Color.addExpression 'desaturate', "desaturate#{ps}(#{notQuote})#{comma}(#{floatO
 Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPercent}|#{variables})#{pe}", (color, expression, vars) ->
   [_, subexpr, amount] = @regExp.exec(expression)
 
-  amount = parseFloatOrPercent amount, vars
-  subexpr = vars[subexpr]?.value ? subexpr
+  amount = readFloatOrPercent(amount, vars, color)
+
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr) and not isNaN(amount)
     baseColor = new Color(subexpr, vars)
@@ -202,6 +245,7 @@ Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPer
 
     color.hsl = [h, clampInt(s + amount * 100), l]
     color.alpha = baseColor.alpha
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -210,7 +254,9 @@ Color.addExpression 'saturate', "saturate#{ps}(#{notQuote})#{comma}(#{floatOrPer
 Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color, expression, vars) ->
   [_, _, subexpr] = @regExp.exec(expression)
 
-  subexpr = vars[subexpr]?.value ? subexpr
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr)
     baseColor = new Color(subexpr, vars)
@@ -218,6 +264,7 @@ Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color,
 
     color.hsl = [h, 0, l]
     color.alpha = baseColor.alpha
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -225,7 +272,9 @@ Color.addExpression 'grayscale', "gr(a|e)yscale#{ps}(#{notQuote})#{pe}", (color,
 Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression, vars) ->
   [_, subexpr] = @regExp.exec(expression)
 
-  subexpr = vars[subexpr]?.value ? subexpr
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr)
     baseColor = new Color(subexpr, vars)
@@ -233,6 +282,7 @@ Color.addExpression 'input', "invert#{ps}(#{notQuote})#{pe}", (color, expression
 
     color.rgb = [255 - r, 255 - g, 255 - b]
     color.alpha = baseColor.alpha
+    color.usedVariables = color.usedVariables.concat(baseColor.usedVariables)
   else
     color.isInvalid = true
 
@@ -244,12 +294,11 @@ Color.addExpression 'css_color_function', "color#{ps}(#{notQuote})#{pe}", (color
   catch e
     color.isInvalid = true
 
-parseParam = (param, vars={}, block) ->
+readParam = (param, vars={}, block) ->
   [block, vars] = [vars, {}] if typeof vars is 'function'
   re = ///\$(\w+):\s*((-?#{float})|#{variables})///
   if re.test(param)
     [_, name, value] = re.exec(param)
-    value = vars[value]?.value if ///#{variables}///.test(value)
 
     block(name, value)
 
@@ -258,14 +307,21 @@ Color.addExpression 'sass_adjust_color', "adjust-color#{ps}(#{notQuote})#{pe}", 
   [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
-  subject = vars[subject]?.value ? subject
-  refColor = new Color(subject, vars)
+  if vars[subject]?
+    color.usedVariables.push(subject)
+    subject = vars[subject].value
 
-  for param in params
-    parseParam param, vars, (name, value) ->
-      refColor[name] += parseFloat(value)
+  if Color.canHandle(subject)
+    refColor = new Color(subject, vars)
 
-  color.rgba = refColor.rgba
+    for param in params
+      readParam param, vars, (name, value) ->
+        refColor[name] += readFloat(value, vars, color)
+
+    color.rgba = refColor.rgba
+    color.usedVariables = color.usedVariables.concat(refColor.usedVariables)
+  else
+    color.isInvalid = true
 
 # scale-color(red, $lightness: 30%)
 Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, vars) ->
@@ -273,32 +329,47 @@ Color.addExpression 'sass_scale_color', "scale-color#{ps}(#{notQuote})#{pe}", 1,
   [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
-  subject = vars[subject]?.value ? subject
-  refColor = new Color(subject, vars)
+  if vars[subject]?
+    color.usedVariables.push(subject)
+    subject = vars[subject].value
 
-  for param in params
-    parseParam param, vars, (name, value) ->
-      value = parseFloat(value) / 100
+  if Color.canHandle(subject)
+    refColor = new Color(subject, vars)
 
-      result = if value > 0
-        dif = MAX_PER_COMPONENT[name] - refColor[name]
-        result = refColor[name] + dif * value
-      else
-        result = refColor[name] * (1+value)
+    for param in params
+      readParam param, vars, (name, value) ->
+        value = readFloat(value, vars, color) / 100
 
-      refColor[name] = result
+        result = if value > 0
+          dif = MAX_PER_COMPONENT[name] - refColor[name]
+          result = refColor[name] + dif * value
+        else
+          result = refColor[name] * (1+value)
 
-  color.rgba = refColor.rgba
+        refColor[name] = result
+
+    color.rgba = refColor.rgba
+    color.usedVariables = color.usedVariables.concat(refColor.usedVariables)
+  else
+    color.isInvalid = true
 
 # change-color(red, $lightness: 30%)
 Color.addExpression 'sass_change_color', "change-color#{ps}(#{notQuote})#{pe}", 1, (color, expression, vars) ->
   [_, subexpr] = @regExp.exec(expression)
   [subject, params...] = split(subexpr)
 
-  refColor = new Color(subject, vars)
+  if vars[subject]?
+    color.usedVariables.push(subject)
+    subject = vars[subject].value
 
-  for param in params
-    parseParam param, vars, (name, value) ->
-      refColor[name] = parseFloat(value)
+  if Color.canHandle(subject)
+    refColor = new Color(subject, vars)
 
-  color.rgba = refColor.rgba
+    for param in params
+      readParam param, vars, (name, value) ->
+        refColor[name] = readFloat(value, vars, color)
+
+    color.rgba = refColor.rgba
+    color.usedVariables = color.usedVariables.concat(refColor.usedVariables)
+  else
+    color.isInvalid = true

@@ -20,10 +20,10 @@ Color = require './color-model'
   strip
   clamp
   clampInt
-  parseInt
-  parseFloat
-  parseIntOrPercent
-  parseFloatOrPercent
+  readInt
+  readFloat
+  readIntOrPercent
+  readFloatOrPercent
 } = require './utils'
 
 # #6f3489ef
@@ -41,7 +41,7 @@ Color.addExpression 'css_hexa_6', "#(#{hexa}{6})(?![\\d\\w])", (color, expressio
 # #38e
 Color.addExpression 'css_hexa_3', "#(#{hexa}{3})(?![\\d\\w])", (color, expression) ->
   [_, hexa] = @regExp.exec(expression)
-  colorAsInt = parseInt(hexa, 16)
+  colorAsInt = readInt(hexa, {}, color, 16)
 
   color.red = (colorAsInt >> 8 & 0xf) * 17
   color.green = (colorAsInt >> 4 & 0xf) * 17
@@ -71,9 +71,9 @@ Color.addExpression 'css_rgb', strip("
 "), (color, expression, vars) ->
   [_,r,_,_,g,_,_,b] = @regExp.exec(expression)
 
-  color.red = parseIntOrPercent(r, vars)
-  color.green = parseIntOrPercent(g, vars)
-  color.blue = parseIntOrPercent(b, vars)
+  color.red = readIntOrPercent(r, vars, color)
+  color.green = readIntOrPercent(g, vars, color)
+  color.blue = readIntOrPercent(b, vars, color)
   color.alpha = 1
 
 # rgba(50,120,200,0.7)
@@ -90,10 +90,10 @@ Color.addExpression 'css_rgba', strip("
 "), (color, expression, vars) ->
   [_,r,_,_,g,_,_,b,_,_,a] = @regExp.exec(expression)
 
-  color.red = parseIntOrPercent(r, vars)
-  color.green = parseIntOrPercent(g, vars)
-  color.blue = parseIntOrPercent(b, vars)
-  color.alpha = parseFloat(a, vars)
+  color.red = readIntOrPercent(r, vars, color)
+  color.green = readIntOrPercent(g, vars, color)
+  color.blue = readIntOrPercent(b, vars, color)
+  color.alpha = readFloat(a, vars, color)
 
 # rgba(green,0.7)
 Color.addExpression 'stylus_rgba', strip("
@@ -105,12 +105,14 @@ Color.addExpression 'stylus_rgba', strip("
 "), (color, expression, vars) ->
   [_,subexpr,a] = @regExp.exec(expression)
 
-  subexpr = vars[subexpr]?.value ? subexpr
+  if vars[subexpr]?
+    color.usedVariables.push(subexpr)
+    subexpr = vars[subexpr].value
 
   if Color.canHandle(subexpr)
     baseColor = new Color(subexpr, vars)
     color.rgb = baseColor.rgb
-    color.alpha = parseFloat(a, vars)
+    color.alpha = readFloat(a, vars, color)
   else
     color.isInvalid = true
 
@@ -127,9 +129,9 @@ Color.addExpression 'css_hsl', strip("
   [_,h,_,s,_,l] = @regExp.exec(expression)
 
   color.hsl = [
-    parseInt(h, vars)
-    parseFloat(s, vars)
-    parseFloat(l, vars)
+    readInt(h, vars, color)
+    readFloat(s, vars, color)
+    readFloat(l, vars, color)
   ]
   color.alpha = 1
 
@@ -148,11 +150,11 @@ Color.addExpression 'css_hsla', strip("
   [_,h,_,s,_,l,_,a] = @regExp.exec(expression)
 
   color.hsl = [
-    parseInt(h,vars)
-    parseFloat(s,vars)
-    parseFloat(l,vars)
+    readInt(h, vars, color)
+    readFloat(s,vars, color)
+    readFloat(l,vars, color)
   ]
-  color.alpha = parseFloat(a,vars)
+  color.alpha = readFloat(a,vars, color)
 
 # hsv(210,70%,90%)
 Color.addExpression 'hsv', strip("
@@ -167,9 +169,9 @@ Color.addExpression 'hsv', strip("
   [_,h,_,s,_,v] = @regExp.exec(expression)
 
   color.hsv = [
-    parseInt(h, vars)
-    parseFloat(s, vars)
-    parseFloat(v, vars)
+    readInt(h, vars, color)
+    readFloat(s, vars, color)
+    readFloat(v, vars, color)
   ]
   color.alpha = 1
 
@@ -188,11 +190,11 @@ Color.addExpression 'hsva', strip("
   [_,h,_,s,_,v,_,a] = @regExp.exec(expression)
 
   color.hsv = [
-    parseInt(h, vars)
-    parseFloat(s, vars)
-    parseFloat(v, vars)
+    readInt(h, vars, color)
+    readFloat(s, vars, color)
+    readFloat(v, vars, color)
   ]
-  color.alpha = parseFloat(a, vars)
+  color.alpha = readFloat(a, vars, color)
 
 
 # vec4(0.2, 0.5, 0.9, 0.7)
@@ -210,10 +212,10 @@ Color.addExpression 'vec4', strip("
   [_,h,s,l,a] = @regExp.exec(expression)
 
   color.rgba = [
-    parseFloat(h) * 255
-    parseFloat(s) * 255
-    parseFloat(l) * 255
-    parseFloat(a)
+    readFloat(h, vars, color) * 255
+    readFloat(s, vars, color) * 255
+    readFloat(l, vars, color) * 255
+    readFloat(a, vars, color)
   ]
 
 # hwb(210,40%,40%)
@@ -230,11 +232,11 @@ Color.addExpression 'hwb', strip("
   [_,h,_,w,_,b,_,_,a] = @regExp.exec(expression)
 
   color.hwb = [
-    parseInt(h, vars)
-    parseFloat(w, vars)
-    parseFloat(b, vars)
+    readInt(h, vars, color)
+    readFloat(w, vars, color)
+    readFloat(b, vars, color)
   ]
-  color.alpha = if a? then parseFloat(a, vars) else 1
+  color.alpha = if a? then readFloat(a, vars, color) else 1
 
 # gray(50%)
 # The priority is set to 1 to make sure that it appears before named colors
@@ -246,9 +248,9 @@ Color.addExpression 'gray', strip("
 
   [_,p,_,_,a] = @regExp.exec(expression)
 
-  p = parseFloat(p, vars) / 100 * 255
+  p = readFloat(p, vars, color) / 100 * 255
   color.rgb = [p, p, p]
-  color.alpha = if a? then parseFloat(a, vars) else 1
+  color.alpha = if a? then readFloat(a, vars, color) else 1
 
 # dodgerblue
 colors = Object.keys(Color.namedColors)

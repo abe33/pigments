@@ -1,21 +1,30 @@
 
 utils =
   strip: (str) -> str.replace(/\s+/g, '')
+
   clamp: (n) -> Math.min(1, Math.max(0, n))
+
   clampInt: (n, max=100) -> Math.min(max, Math.max(0, n))
-  parseFloat: (value, vars={}) ->
+
+  readFloat: (value, vars={}, color) ->
     res = parseFloat(value)
-    res = parseFloat(vars[value]?.value) if isNaN(res)
+    if isNaN(res) and vars[value]?
+      color.usedVariables.push(value)
+      res = parseFloat(vars[value].value)
     res
 
-  parseInt: (value, base, vars={}) ->
-    [base, vars] = [10, base] if typeof base is 'object'
+  readInt: (value, vars={}, color, base=10) ->
     res = parseInt(value, base)
-    res = parseInt(vars[value]?.value, base) if isNaN(res)
+    if isNaN(res) and vars[value]?
+      color.usedVariables.push(value)
+      res = parseInt(vars[value].value, base)
     res
 
-  parseIntOrPercent: (value, vars={}) ->
-    value = vars[value]?.value unless /\d+/.test(value)
+  readIntOrPercent: (value, vars={}, color) ->
+    if not /\d+/.test(value) and vars[value]?
+      color.usedVariables.push(value)
+      value = vars[value].value
+
     return NaN unless value?
 
     if value.indexOf('%') isnt -1
@@ -25,8 +34,11 @@ utils =
 
     res
 
-  parseFloatOrPercent: (amount, vars={}) ->
-    amount = vars[amount]?.value unless /\d+/.test(amount)
+  readFloatOrPercent: (amount, vars={}, color) ->
+    if not /\d+/.test(amount) and vars[amount]?
+      color.usedVariables.push(amount)
+      amount = vars[amount].value
+
     return NaN unless amount?
 
     if amount.indexOf('%') isnt -1

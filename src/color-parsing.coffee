@@ -90,6 +90,7 @@ class ColorParsing extends Mixin
         Color.addExpression 'variables', paletteRegexpString, 1, (color, expr) ->
           [d,d,name] = paletteRegexp.exec(expr)
           color.rgba = new Color(variablesMap[name].value, variablesMap).rgba
+          color.usedVariables.push(name)
           color.colorExpression = name
 
       results = []

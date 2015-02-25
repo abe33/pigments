@@ -25,11 +25,13 @@ itShouldParseTheColorWithVariables = (expr, vars, red=0, green=0, blue=0, alpha=
   describe "created with #{desc} and variables #{util.inspect(vars)}", ->
     it msg, ->
       color = new Color(expr, vars)
+      keys = Object.keys(vars)
 
       expect(color.isInvalid).toBeFalsy()
       expect(Math.round(color.red)).toEqual(red)
       expect(Math.round(color.green)).toEqual(green)
       expect(Math.round(color.blue)).toEqual(blue)
+      expect(color.usedVariables.concat().sort()).toEqual(keys.sort())
       expect(color.alpha).toBeCloseTo(alpha, 0.001)
 
 itShouldParseTheColorAsInvalid = (expr, vars={}) ->
@@ -57,9 +59,6 @@ describe 'Color', ->
   itShouldParseTheColor('0x00ff7f00', 255, 127, 0, 0)
 
   itShouldParseTheColor('rgb(255,127,0)', 255, 127, 0)
-  itShouldParseTheColor('rgba(255,127,0,0.5)', 255, 127, 0, 0.5)
-  itShouldParseTheColor('rgba(255,127,0,.5)', 255, 127, 0, 0.5)
-  itShouldntParseTheColor('rgba(255,127,0,)')
   itShouldParseTheColorAsInvalid('rgb($r,$g,$b)')
   itShouldParseTheColorWithVariables('rgb($r,$g,$b)', {
     '$r':
@@ -69,6 +68,10 @@ describe 'Color', ->
     '$b':
       value: '0'
   }, 255, 127, 0)
+
+  itShouldParseTheColor('rgba(255,127,0,0.5)', 255, 127, 0, 0.5)
+  itShouldParseTheColor('rgba(255,127,0,.5)', 255, 127, 0, 0.5)
+  itShouldntParseTheColor('rgba(255,127,0,)')
   itShouldParseTheColorAsInvalid('rgba($r,$g,$b,$a)')
   itShouldParseTheColorWithVariables('rgba($r,$g,$b,$a)', {
     '$r':

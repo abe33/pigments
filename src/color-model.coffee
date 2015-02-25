@@ -165,10 +165,9 @@ class Color
   # supports. Each expression handler is tested against the expression and
   # the first to match is used.
   constructor: (@colorExpression=null, vars={}) ->
-    [@red, @green, @blue, @alpha, @isInvalid] = [0, 0, 0, 1, false]
+    [@red, @green, @blue, @alpha, @isInvalid, @usedVariables] = [0,0,0,1,false,[]]
 
-    if @colorExpression?
-      @parseExpression(@colorExpression, vars)
+    @parseExpression(@colorExpression, vars) if @colorExpression?
 
   # Public: Returns the luma value for the current color
   luma: ->
